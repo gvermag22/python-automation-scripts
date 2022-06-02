@@ -18,9 +18,8 @@ import datetime;
 print('\n')
 print("make sure you format the csv file if downloaded from Google sheets")
 print("dos2unix contacts.csv")
-print('Use this awk script:')
-print("BEGIN { FS=\",\"; OFS=\",\"; }")
-print("{ split($1,a,\" \"); print $2, a[1]\" ji\"; }")
+print('awk -f fixcontacts.awk <numbers.csv>')
+
 print('\n')
 
 #
