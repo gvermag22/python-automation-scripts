@@ -3,6 +3,7 @@ import logging
 import os
 import platform
 import random
+import re
 import sys
 from tkinter import W
 from selenium import webdriver
@@ -19,7 +20,6 @@ print('\n')
 print("make sure you format the csv file if downloaded from Google sheets")
 print("dos2unix contacts.csv")
 print('awk -f fixcontacts.awk <numbers.csv>')
-
 print('\n')
 
 #
@@ -89,28 +89,27 @@ var3_from_csv = []
 def index_exists(ls, i):
     return (0 <= i < len(ls))
 
-#
-# function to sanitize whatsapp no so that we don't get invalid number error
-#
-def sanitize(numstring):
-    newnumber=numstring.replace("(", "")
-    newnumber=newnumber.replace(")", "")
-    newnumber=newnumber.replace("-", "")
-    newnumber=newnumber.replace(" ", "")
-    # if country code not given, default to +1 for US
-    if len(newnumber)==10: newnumber="+1"+newnumber
-    return newnumber
-
 try:
     file = open(file_numbers, 'r')
     csv_reader = csv.reader(file)
     for row in csv_reader:
         #print (row)
-        sanitized_whatsapp_no = sanitize(row[0])
-        whatsappnumber_from_csv.append(sanitized_whatsapp_no)
-        if index_exists(row, 1): var1_from_csv.append(row[1]); #print('added var1')
-        if index_exists(row, 2): var2_from_csv.append(row[2]); #print('added var2')
-        if index_exists(row, 3): var3_from_csv.append(row[3]); #print('added var3')
+        #
+        # this assumes that the phone numbers are in +1XXXXXXXXXX format
+        # and the numbersfile has been treated with fixcontacts.awk script
+        # If the numbers are not in +1XXXXXXXXXX format, the script will not work
+       
+        #
+        # Only process rows that are not commented with # character in beginning
+        #
+        print('read in '+ str(row))
+        if (re.search("^#", row[0]) == None):
+            print('It is uncommented')
+            whatsappnumber_from_csv.append(row[0])
+
+            if index_exists(row, 1): var1_from_csv.append(row[1]); #print('added var1')
+            if index_exists(row, 2): var2_from_csv.append(row[2]); #print('added var2')
+            if index_exists(row, 3): var3_from_csv.append(row[3]); #print('added var3')
 except:
     print("The numbers csv file input is invalid")
     exit(1)
@@ -166,7 +165,7 @@ for i in range(len(whatsappnumber_from_csv)):
         #
         # wait for the page to load, it can take a while sometimes
         #
-        time.sleep(random.randint(7,10))
+        time.sleep(10)
         #
         # Enter the message with substituted tokens into the chrome window
         # The xpath value will keep changing as whatsapp evolves. It has to be tested once in a while.
@@ -183,7 +182,7 @@ for i in range(len(whatsappnumber_from_csv)):
         #
         # wait for a bit before the next message
         #
-        time.sleep(random.randint(1,4))
+        time.sleep(10)
         print ('Message sent successfully for ' + whatsappnumber_from_csv[i])
     except:
         #
@@ -217,5 +216,7 @@ for i in range(len(whatsappnumber_from_csv)):
 # if error file exists, close it
 #
 if os.path.exists(errorfilename) == True:
+    print('Some messages could not be sent. You should rename the error file and rerun the program with it:')
+    print('mv ' + errorfilename + ' ' + file_numbers + '.err')
     errorfile.close()
 driver.quit()

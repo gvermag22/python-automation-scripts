@@ -3,6 +3,7 @@ import logging
 import os
 import platform
 import random
+import re
 import sys
 from tkinter import W
 from selenium import webdriver
@@ -21,6 +22,7 @@ import datetime;
 try:
     my_parser = argparse.ArgumentParser()
     my_parser.add_argument('-n', '--numbersfile', default='numbers.csv', help='the file containing whatsapp numbers')
+    my_parser.add_argument('-m', '--messagefile', help='the file containing text message for first image')
     my_parser.add_argument('-i', '--imagefile', nargs='+', default=['image1.jpeg', 'image2.jpeg', 'image3.jpeg'], help='the image files to be sent')
     my_parser.add_argument('-d', '--chromedriver', default='chromedriver', help='the full path for chromedriver including directory')
    
@@ -32,6 +34,11 @@ try:
     else:
         file_numbers=args.numbersfile
     
+    if os.path.exists(args.messagefile) == False: 
+        print ('Messagefile does not exist')
+        sys.exit(1)
+    else:
+        file_msg=args.messagefile
     #
     # get current directory per OS
     #
@@ -74,6 +81,9 @@ print('Chromedriver file is ' + file_chromedriver)
 # This program assumes max of 3 tokens that will be substitited
 # 
 whatsappnumber_from_csv = []
+var1_from_csv = []
+var2_from_csv = []
+var3_from_csv = []
 
 #
 # function to see if an index exists for an array or not
@@ -81,29 +91,45 @@ whatsappnumber_from_csv = []
 def index_exists(ls, i):
     return (0 <= i < len(ls))
 
-#
-# function to sanitize whatsapp no so that we don't get invalid number error
-#
-def sanitize(numstring):
-    newnumber=numstring.replace("(", "")
-    newnumber=newnumber.replace(")", "")
-    newnumber=newnumber.replace("-", "")
-    newnumber=newnumber.replace(" ", "")
-    # if country code not given, default to +1 for US
-    if len(newnumber)==10: newnumber="+1"+newnumber
-    return newnumber
-
 try:
     file = open(file_numbers, 'r')
     csv_reader = csv.reader(file)
     for row in csv_reader:
-        sanitized_whatsapp_no = sanitize(row[0])
-        whatsappnumber_from_csv.append(sanitized_whatsapp_no)
+        #
+        # this assumes that the phone numbers are in +1XXXXXXXXXX format
+        # and the numbersfile has been treated with fixcontacts.awk script
+        # If the numbers are not in +1XXXXXXXXXX format, the script will not work
+        #
+        # Only process rows that are not commented with # character in beginning
+        #
+        print('read in ' + str(row))
+        if (re.search("^#", row[0]) == None):
+            print('It is uncommented')
+            whatsappnumber_from_csv.append(row[0])
+
+            if index_exists(row, 1): var1_from_csv.append(row[1]); print('added var1 ' + row[1])
+            if index_exists(row, 2): var2_from_csv.append(row[2]); print('added var2 ' + row[2])
+            if index_exists(row, 3): var3_from_csv.append(row[3]); print('added var3 ' + row[3])
+
 except:
     print("The numbers csv file input is invalid")
+    file.close()
     exit(1)
-
+    
 file.close()
+
+print('After reading from numbers file')
+print(whatsappnumber_from_csv)
+print(var1_from_csv)
+print(var2_from_csv)
+print(var3_from_csv)
+
+#
+# read the message into a variable 
+#
+with open(file_msg, 'r') as file:
+   message = file.read()
+print(message)
 
 #
 # prepare whatsapp window
@@ -139,12 +165,17 @@ for i in range(len(whatsappnumber_from_csv)):
         # If the QR code authentication was done in the earlier session, even this is not needed, but it's necessary to have this step 
         # to make sure the authentication is successful
         #
-        if i==0: input('\n\nPress enter after scanning QR code and put focus on Chrome window. DO NOT switch focus else sending will fail. You MUST WAIT till sending is done.')
+        if i==0: 
+            print('\nAfter scanning QR code, do the following:\n') 
+            print('1. Press Enter')
+            print('2. Immediately switch back focus to the python-controlled Chrome window')
+            print('3. DO NOT switch focus else sending will fail. You MUST WAIT till sending is done.')
+            input()
 
         #
         # wait for the page to load, it can take a while sometimes
         #
-        time.sleep(random.randint(10,15))
+        time.sleep(10)
 
         #
         # Loop through the images specified to send
@@ -156,14 +187,31 @@ for i in range(len(whatsappnumber_from_csv)):
                 #
                 attachment_box = driver.find_element(by=By.XPATH, value='//div[@title="Attach"]') 
                 attachment_box.click()
-                time.sleep(1)
+                time.sleep(3)
 
                 #
                 # click on image icon
                 #
                 image_box = driver.find_element(by=By.XPATH, value='//input[@accept="image/*,video/mp4,video/3gpp,video/quicktime"]')
                 image_box.send_keys(args.imagefile[j])
-                time.sleep(2)
+                time.sleep(3)
+
+                #
+                # For the first image, put in the message if it was passed as a file 
+                #
+                if (j == 0) and (message != ""):
+                    
+                    #
+                    # substitute the personalized token values into the message template
+                    #
+                    if index_exists(var1_from_csv, i): new_message = message.replace("x1", var1_from_csv[i])
+                    if index_exists(var2_from_csv, i): new_message = new_message.replace("x2", var2_from_csv[i])
+                    if index_exists(var3_from_csv, i): new_message = new_message.replace("x3", var3_from_csv[i])    
+                    print('After substitution ' + new_message)
+
+                    message_box = driver.find_element(by=By.XPATH, value='//div[@role="textbox"]')
+                    message_box.send_keys(new_message)
+                    time.sleep(3)
 
                 #
                 # click on send button
@@ -188,7 +236,11 @@ for i in range(len(whatsappnumber_from_csv)):
         #
         # construct an errormessage that replicates the current numbers.csv row 
         #`
-        errormesg = whatsappnumber_from_csv[i] + '\n'
+        errormesg = whatsappnumber_from_csv[i]
+        if index_exists(var1_from_csv, i): errormesg = errormesg + ',' + var1_from_csv[i]
+        if index_exists(var2_from_csv, i): errormesg = errormesg + ',' + var2_from_csv[i]
+        if index_exists(var3_from_csv, i): errormesg = errormesg + ',' + var3_from_csv[i]
+        errormesg = errormesg + '\n'
         
         #
         #  print the detailed error stack
@@ -206,5 +258,7 @@ for i in range(len(whatsappnumber_from_csv)):
 # if error file exists, close it
 #
 if os.path.exists(errorfilename) == True:
+    print('Some messages could not be sent. You should rename the error file and rerun the program with it:')
+    print('mv ' + errorfilename + ' ' + file_numbers + '.err')
     errorfile.close()
 driver.quit()
