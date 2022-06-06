@@ -8,11 +8,11 @@ Right now, these run well on Unix or MacOS.
 ==> Mainly, the xpath value of UI/text components will need to be verified/updated.
 
 ## Input files:
-numbers.csv - Comma delimited file with Whatsapp contact# and variables. Rows to be ignored can be commented with # in beginning of line
-message.txt - A file with text message and variables x1, x2, x3 where ever you want to switch the variables like 
-image[1-3].jpeg - Upto 3 image files to be sent to whatsapp contacts
-chromedriver - the chromedriver file for MacOS/unix
-- 
+- numbers.csv - Comma delimited file with Whatsapp contact# and variables. Rows to be ignored can be commented with # in beginning of line
+- message.txt - A file with text message and variables x1, x2, x3 where ever you want to switch the variables like 
+- image[1-3].jpeg - Upto 3 image files to be sent to whatsapp contacts
+- chromedriver - the chromedriver file for MacOS/unix
+
 ## MacOS setup
 - brew install python #install python
 - brew install pip3 #install pip3
@@ -23,7 +23,7 @@ chromedriver - the chromedriver file for MacOS/unix
 
 - Create a folder $BASE_FOLDER where you will store all the input and code files for this application.
 - copy python and awk scripts from repository into this directory
--
+
 - cd $BASE_FOLDER
 
 - dos2unix numbers.csv # remove special return characters from the csv file to avoid weird errors. This is important.
