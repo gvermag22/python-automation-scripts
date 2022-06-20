@@ -8,10 +8,12 @@ Right now, these run well on Unix or MacOS.
 ==> Mainly, the xpath value of UI/text components will need to be verified/updated.
 
 ## MacOS setup
-- brew install python #install python
-- brew install pip3 #install pip3
-- pip3 install selenium #install selenium
-- brew install dos2unix #install dos2unix
+```
+brew install python #install python
+brew install pip3 #install pip3
+pip3 install selenium #install selenium
+brew install dos2unix #install dos2unix
+```
 - download the chrome driver according to your chrome version and OS from https://chromedriver.chromium.org/download
 - xattr -d com.apple.quarantine chromedriver
 
