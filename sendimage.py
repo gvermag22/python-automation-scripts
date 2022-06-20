@@ -155,7 +155,7 @@ errorfilename="sendimage.py." + tstamp + ".err"
 #
 for i in range(len(whatsappnumber_from_csv)):
     try:
-        print ('Sending image(s) to ' + whatsappnumber_from_csv[i])
+        print ('Sending image(s) to ' + whatsappnumber_from_csv[i] + ': ' + str(i) + ' of ' + str(len(whatsappnumber_from_csv)))
         #
         # Open whatsapp web window for the contact. You don't need to save this contact in the phone.
         #
@@ -167,15 +167,17 @@ for i in range(len(whatsappnumber_from_csv)):
         #
         if i==0: 
             print('\nAfter scanning QR code, do the following:\n') 
-            print('1. Press Enter')
-            print('2. Immediately switch back focus to the python-controlled Chrome window')
-            print('3. DO NOT switch focus else sending will fail. You MUST WAIT till sending is done.')
+            print('1. Ensure computer is plugged into power.')
+            print('2. Ensure computer setting are not set to sleep after long period of inactivity')
+            print('3. Press Enter')
+            print('4. Immediately switch back focus to the python-controlled Chrome window')
+            print('5. DO NOT switch focus else sending will fail. You MUST WAIT till sending is done.')
             input()
 
         #
         # wait for the page to load, it can take a while sometimes
         #
-        time.sleep(10)
+        time.sleep(random.randrange(10,20))
 
         #
         # Loop through the images specified to send
@@ -187,14 +189,14 @@ for i in range(len(whatsappnumber_from_csv)):
                 #
                 attachment_box = driver.find_element(by=By.XPATH, value='//div[@title="Attach"]') 
                 attachment_box.click()
-                time.sleep(3)
+                time.sleep(random.randrange(5,10))
 
                 #
                 # click on image icon
                 #
                 image_box = driver.find_element(by=By.XPATH, value='//input[@accept="image/*,video/mp4,video/3gpp,video/quicktime"]')
                 image_box.send_keys(args.imagefile[j])
-                time.sleep(3)
+                time.sleep(random.randrange(5,10))
 
                 #
                 # For the first image, put in the message if it was passed as a file 
@@ -211,14 +213,14 @@ for i in range(len(whatsappnumber_from_csv)):
 
                     message_box = driver.find_element(by=By.XPATH, value='//div[@role="textbox"]')
                     message_box.send_keys(new_message)
-                    time.sleep(3)
+                    time.sleep(random.randrange(5,10))
 
                 #
                 # click on send button
                 #
                 send_btn = driver.find_element(by=By.XPATH, value='//span[@data-icon="send"]')
                 send_btn.click()
-                time.sleep(5)
+                time.sleep(random.randrange(5,10))
 
                 print ('Image ' + args.imagefile[j] + ' sent successfully to ' + whatsappnumber_from_csv[i])
             except:
@@ -226,6 +228,7 @@ for i in range(len(whatsappnumber_from_csv)):
                 #  print the detailed error stack
                 #
                 logging.exception ('Could not send image ' + args.imagefile[j] + ' to ' + whatsappnumber_from_csv[i]); 
+                raise
     except:
         #
         #  if the error file does not exist create it for the first time
@@ -258,7 +261,8 @@ for i in range(len(whatsappnumber_from_csv)):
 # if error file exists, close it
 #
 if os.path.exists(errorfilename) == True:
-    print('Some messages could not be sent. You should rename the error file and rerun the program with it:')
+    print('\n\nSome messages could not be sent. You should rename the error file and rerun the program with it:')
+    print('wc -l ' + errorfilename)
     print('mv ' + errorfilename + ' ' + file_numbers + '.err')
     errorfile.close()
 driver.quit()

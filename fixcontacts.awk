@@ -1,3 +1,4 @@
+# usage: awk -f fixcontacts.awk phonepos=2 namesuffix="ji" kirtan.csv
 #
 # phonepos argument tells the column position of Whatsapp phone no in the csv file
 # namesuffix is the string to be appended to the name
@@ -27,5 +28,8 @@ BEGIN { FS=","; OFS=","; }
   # if the US country code is  there in the beginning but there is no + then add it
   if (n ~ /^1/ && length(n)==11) n="+"n ;
   
-  print n, a[1]" "namesuffix; 
+  firstname=a[1];
+  gsub("[\"]","",firstname);
+
+  print n, firstname" "namesuffix; 
 }
