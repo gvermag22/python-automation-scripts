@@ -20,6 +20,8 @@ brew install dos2unix #install dos2unix
 - Create a folder $BASE_FOLDER where you will store all the input and code files for this application.
 - copy python and awk scripts from repository into this directory
 
+## Contacts setup
+
 cd $BASE_FOLDER
 
 Before running any of the python scripts, you should run these scripts to sanitize and prepare your contacts list:
