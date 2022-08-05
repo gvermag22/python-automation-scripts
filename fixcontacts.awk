@@ -31,5 +31,5 @@ BEGIN { FS=","; OFS=","; }
   firstname=a[1];
   gsub("[\"]","",firstname);
 
-  print n, firstname" "namesuffix; 
+  print n, toupper(substr(firstname,1,1)) tolower(substr(firstname,2))" "namesuffix; 
 }
