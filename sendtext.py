@@ -183,7 +183,7 @@ for i in range(len(whatsappnumber_from_csv)):
         # wait for a bit before the next message
         #
         time.sleep(10)
-        print ('Message sent successfully for ' + whatsappnumber_from_csv[i] + ' Now at approx ' + round((i/len(whatsappnumber_from_csv))*100) + ' percent of input list')
+        print ('Message sent successfully for ' + whatsappnumber_from_csv[i] + ' Now at approx ' + str(round((i/len(whatsappnumber_from_csv))*100)) + ' percent of input list')
     except:
         #
         #  if the error file does not exist create it for the first time
