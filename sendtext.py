@@ -5,7 +5,6 @@ import platform
 import random
 import re
 import sys
-from tkinter import W
 from selenium import webdriver
 import csv
 from selenium.webdriver.common.by   import By
@@ -112,6 +111,7 @@ try:
             if index_exists(row, 3): var3_from_csv.append(row[3]); #print('added var3')
 except:
     print("The numbers csv file input is invalid")
+    file.close()
     exit(1)
 
 file.close()
@@ -183,7 +183,7 @@ for i in range(len(whatsappnumber_from_csv)):
         # wait for a bit before the next message
         #
         time.sleep(10)
-        print ('Message sent successfully for ' + whatsappnumber_from_csv[i])
+        print ('Message sent successfully for ' + whatsappnumber_from_csv[i] + ' Now at approx ' + round((i/len(whatsappnumber_from_csv))*100) + ' percent of input list')
     except:
         #
         #  if the error file does not exist create it for the first time
