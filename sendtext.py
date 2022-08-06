@@ -165,7 +165,7 @@ for i in range(len(whatsappnumber_from_csv)):
         #
         # wait for the page to load, it can take a while sometimes
         #
-        time.sleep(10)
+        time.sleep(15)
         #
         # Enter the message with substituted tokens into the chrome window
         # The xpath value will keep changing as whatsapp evolves. It has to be tested once in a while.
