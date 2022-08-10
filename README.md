@@ -21,7 +21,7 @@ brew install dos2unix #install dos2unix
 - copy python and awk scripts from repository into this directory
 
 ## Contacts setup
-
+find
 cd $BASE_FOLDER
 
 Before running any of the python scripts, you should run these scripts to sanitize and prepare your contacts list:
@@ -37,9 +37,9 @@ findcommon.sh file1.csv file2.csv # Use this to find common whatsapp numbers in 
 ## sendtext.py
 
 ### Input files:
-numbers.csv - Comma delimited file with Whatsapp contact# and variables. Rows to be ignored can be commented with # in beginning of line
-message.txt - A file with text message and variables x1, x2, x3 where ever you want to switch the variables like 
-chromedriver - the chromedriver file for MacOS/unix
+- numbers.csv: A comma delimited file with Whatsapp contact# and variables. Rows that should not be procssed can be commented with # at the beginning of the line
+- message.txt: A file with text message and variables x1, x2, x3 where ever you want to switch the variables like 
+- chromedriver: The chromedriver file for MacOS/unix
 
 ### usage examples:
 ```
@@ -51,10 +51,10 @@ python3 sendtext.py -n contacts.csv -m message1.txt # send message in message1.t
 ## sendimage.py
 
 ### Input files:
-numbers.csv - Comma delimited file with Whatsapp contact# and variables. Rows to be ignored can be commented with # in beginning of line
-message.txt - A file with text message and variables x1, x2, x3 where ever you want to switch the variables like 
-image[1-3].jpeg - Upto 3 image files to be sent to whatsapp contacts
-chromedriver - the chromedriver file for MacOS/unix
+- numbers.csv: A comma delimited file with Whatsapp contact# and variables. Rows that should not be procssed can be commented with # at the beginning of the line
+- message.txt: A file with text message and variables x1, x2, x3 where ever you want to switch the variables like 
+- image[1-3].jpeg: The names of upto 3 image files to be sent to whatsapp contacts
+- chromedriver: The chromedriver file for MacOS/unix
 
 ### usage examples:
 ```

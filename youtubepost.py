@@ -10,6 +10,7 @@ import subprocess
 import sys
 import time
 import urllib.request, re
+from requests import NullHandler
 from selenium.webdriver.common.by   import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
@@ -28,7 +29,8 @@ my_parser = argparse.ArgumentParser()
 my_parser.add_argument('-k', '--keywordsfile', default='youtubekeywords.txt', help='the file containing keyword combinations for finding youtube videos')
 my_parser.add_argument('-c', '--commentsfile', default='youtubecomments.txt', help='the file containing comments to be posted for each video')
 my_parser.add_argument('-v', '--videosfile', default='youtubevideos.txt', help='the file to write to with youtube video links for keyword combinations')
-my_parser.add_argument('-s', '--nofscrolls', default=5, help='the number of page scrolls for scraping youtube videos for a keywords combination')
+my_parser.add_argument('-o', '--overwritevideos', default='no', help='denote whether videosfile should be overwritten or not')
+my_parser.add_argument('-s', '--nofscrolls', default=10, help='the number of page scrolls for scraping youtube videos for a keywords combination')
 my_parser.add_argument('-d', '--chromedriver', default='chromedriver', help='the full path for chromedriver including directory')
 
 args = my_parser.parse_args()
@@ -127,6 +129,12 @@ stealth(driver,
         )
 
 #
+# function to remove duplicates in a list
+#
+def remove_duplicates(x):
+  return list(dict.fromkeys(x))
+
+#
 # write the list of videos for keywords in a file
 #
 def generate_videos_list():
@@ -146,7 +154,10 @@ def generate_videos_list():
         #
         driver.get(search_url)
         driver.maximize_window()
-        time.sleep(5)
+        #
+        #  sleep random time
+        #
+        time.sleep(random.randrange(5,15))
 
         nof_scrolls = 0
         while True:
@@ -178,7 +189,7 @@ def generate_videos_list():
             #
             # wait for page to load
             #
-            time.sleep(5)
+            time.sleep(random.randrange(5,10))
     #
     #  close the videosfile
     #
@@ -225,6 +236,10 @@ def comment_on_videos_list():
             if (re.search("^#", comment) == None) and isBlank(video) != False:
                 print("Not commented or empty,read in " + video)
                 videos.append(video)
+    # 
+    # remove duplicate videos
+    #            
+    videos = remove_duplicates(videos)
     print (videos)
 
     actions = ActionChains(driver) ##Action Chains
@@ -240,19 +255,25 @@ def comment_on_videos_list():
         # Also, to make the actual input comment element to be interactable you first need to click another element.
         #
         driver.get(video_url)
-        time.sleep(random.randrange(10,15))
+        #
+        #  put random delays to simulate human activity
+        #
+        time.sleep(random.randrange(20,60))
 
         # 
         # Login for the first video
         # For later postings, the cookies will self-authenticate
         #
         if j == 0:
-            input('Press enter after login to Youtube...')
+            input('Click a few videos, scroll up/down, watch for sometime to simulate human behavior, and press enter after login to Youtube...')
             #
             # reload first video
             #
             driver.get(video_url)
-            time.sleep(random.randrange(5,10))
+            #
+            #  put random delays to simulate human activity
+            #
+            time.sleep(random.randrange(7,15))
 
         # find element within 5 scroll downs
         elem, bool = scroll_till_you_find_and_click_element("//*[@id='placeholder-area']", 5)
@@ -285,7 +306,10 @@ def comment_on_videos_list():
             # actions.send_keys(Keys.ENTER) ##Press ENTER
             # actions.perform() 
 
-            time.sleep(random.randrange(5,10))
+            #
+            #  put random delays to simulate human activity
+            #
+            time.sleep(random.randrange(10,20))
 
         #input("Press enter after verifying comment posting..")
 
@@ -294,8 +318,16 @@ def comment_on_videos_list():
 #
 if __name__ == '__main__':
 
-    if os.path.exists(args.videosfile) == False: 
+    #
+    # save videos in videosfile if it doesn't exist or the overwrite flag is on
+    #
+    if os.path.exists(args.videosfile) == False or args.overwritevideos.upper() in ["YES", "Y"]: 
         generate_videos_list()
     else:
-        comment_on_videos_list()
+        print("\nThe videosfile already exists and you chose not to overwrite it\n")
+   
+    input("Press ENTER if you want to continue with posting comments now? If not, press Control-C to abort...")
+
+    comment_on_videos_list()
+
     driver.quit()

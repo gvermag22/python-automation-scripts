@@ -150,33 +150,50 @@ for i in range(len(whatsappnumber_from_csv)):
     if index_exists(var3_from_csv, i): new_message = new_message.replace("x3", var3_from_csv[i])
 
     try:
-        print ('Sending message ' + new_message + ' to ' + whatsappnumber_from_csv[i])
+        print ('----------------------------------------------------------------------')
+        print ('Now processing ' + whatsappnumber_from_csv[i])
+        print ('Sending message ' + new_message)
         #
         # Open whatsapp web window for the contact. You don't need to save this contact in the phone.
         #
         driver.get('https://web.whatsapp.com/send/?phone=' + whatsappnumber_from_csv[i])
+
         #
         # only wait for the QR code authentication the first time, after that it will remember from cache
         # If the QR code authentication was done in the earlier session, even this is not needed, but it's necessary to have this step 
         # to make sure the authentication is successful
         #
-        if i==0: input('\n\nPress enter after scanning QR code')
+        if i==0: input('\n\nPress enter after scanning QR code on web.whatsapp.com with your mobile app....')
 
         #
         # wait for the page to load, it can take a while sometimes
         #
-        time.sleep(15)
+        time.sleep(25)
         #
         # Enter the message with substituted tokens into the chrome window
         # The xpath value will keep changing as whatsapp evolves. It has to be tested once in a while.
         # To get the correct value, click on the text field in browser and right click inspect
         # then right ckck on the inspection element and copy full xpath here
         # 
-        #msg_box = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div/div/div[4]/div/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[2]')
         msg_box = driver.find_element(by=By.XPATH, value='//div[@title="Type a message"]')
         #print ('after find element message')
-        msg_box.send_keys(new_message)
-        #print ('after send keys message')
+        
+        #
+        # split the message into individual lines while stripping out end of line character so that the message doesn't get broken into multiple messages
+        #
+        message_lines_without_EOL=new_message.split('\n')
+
+        #
+        # now send each line one at a time
+        #
+        for aline in message_lines_without_EOL:
+            msg_box.send_keys(aline)
+            #
+            # Type SHIFT ENTER to simulate a new EOL character in the web window without creating a new message
+            #
+            msg_box.send_keys(Keys.SHIFT,'\n')
+        #print ('after send keys message for individual lines')
+
         msg_box.send_keys(Keys.RETURN)
         #print ('after send keys return')
         #
@@ -217,6 +234,7 @@ for i in range(len(whatsappnumber_from_csv)):
 #
 if os.path.exists(errorfilename) == True:
     print('Some messages could not be sent. You should rename the error file and rerun the program with it:')
+    print('wc -l ' + errorfilename)
     print('mv ' + errorfilename + ' ' + file_numbers + '.err')
     errorfile.close()
 driver.quit()
