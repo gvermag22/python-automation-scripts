@@ -99,9 +99,11 @@ python3 redditpost.py -u <Reddituser> -p <Redditpassword> -t titlefile -m messag
 ## youtubepost.py
 
 ### Input files:
-- titlefile: A file with the title of the message to be posted
-- messagefile: A file with main body message for the reddit post 
-- groupsfile: A file with list of Reddit group URLs. Rows that should not be processed can be commented with # at the beginning
+- keywordsfile: A file with search keywords for youtube videos on which comments will be posted
+- commentsfile: A file with a list of comments (one per line). Only one comment is randomly chosen from the list
+- videosfile: A filename where a list of videos will be generated for the keywords specificed in keywordsfile
+- overwritevideosfileflag: Yes/Y tells the program to create the videosfile fresh otherwise it uses the preexisting list of videos
+- nofscrolls: a number specifying how many pages worth of search results need to be captured in videosfile
 - chromedriver: The chromedriver file for MacOS/unix
 
 ### usage examples:
