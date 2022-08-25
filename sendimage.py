@@ -212,30 +212,17 @@ for i in range(len(whatsappnumber_from_csv)):
                     print('After substitution ' + new_message)
 
                     msg_box = driver.find_element(by=By.XPATH, value='//div[@role="textbox"]')
-                    #
-                    # split the message into individual lines while stripping out end of line character so that the message doesn't get broken into multiple messages
-                    #
-                    message_lines_without_EOL=new_message.split('\n')
-
-                    #
-                    # now send each line one at a time
-                    #
-                    for aline in message_lines_without_EOL:
-                        msg_box.send_keys(aline)
-                        #
-                        # Type SHIFT ENTER to simulate a new EOL character in the web window without creating a new message
-                        #
-                        msg_box.send_keys(Keys.SHIFT,'\n')
-                    #print ('after send keys message for individual lines')
                     
+                    msg_box.send_keys(new_message)
+
                     time.sleep(random.randrange(5,10))
 
                 #
                 # click on send button
                 #
-                send_btn = driver.find_element(by=By.XPATH, value='//span[@data-icon="send"]')
-                send_btn.click()
-                time.sleep(random.randrange(5,10))
+                #send_btn = driver.find_element(by=By.XPATH, value='//span[@data-icon="send"]')
+                #send_btn.click()
+                #time.sleep(random.randrange(5,10))
 
                 print ('Image ' + args.imagefile[j] + ' sent successfully to ' + whatsappnumber_from_csv[i])
             except:
