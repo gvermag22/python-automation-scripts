@@ -46,6 +46,9 @@ findcommon.sh file1.csv file2.csv # Use this to find common whatsapp numbers in 
 - message.txt: A file with text message and variables x1, x2, x3 where ever you want to switch the variables like 
 - chromedriver: The chromedriver file for MacOS/unix
 
+### Known issues
+- after few hours, the connection times out, so you have to run the script again against the numbers.csv.err file at the end
+
 ### usage examples:
 ```
 python3 sendtext.py -h # get help on usage
@@ -60,6 +63,11 @@ python3 sendtext.py -n contacts.csv -m message1.txt # send message in message1.t
 - message.txt: A file with text message and variables x1, x2, x3 where ever you want to switch the variables like 
 - image[1-3].jpeg: The names of upto 3 image files to be sent to whatsapp contacts
 - chromedriver: The chromedriver file for MacOS/unix
+
+### Known issues
+- you cannot have newlines in the message text. it will hit enter for each newline in the message and the experience won't be good.
+- you need to switch focus to the automated whatsapp window and keep it so till all images have been sent
+- after few hours, the connection times out, so you have to run the script again against the numbers.csv.err file at the end
 
 ### usage examples:
 ```
