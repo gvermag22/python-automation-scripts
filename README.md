@@ -81,12 +81,13 @@ python3 sendtext.py -n numbers.csv -i image1.jpeg image2.jpeg -m imagemessage.tx
 ### Input files:
 - messagefile: A file with main body message for FB group 
 - groupsfile: A file with list of FB group URLs. Rows that should not be processed can be commented with # at the beginning
-- chromedriver: The chromedriver file for MacOS/unix
+- profilefile: A file with URL of the profile from where you want to post
+- 
 
 ### usage examples:
 ```
 python3 fbgrouppost.py -h
-python3 fbgrouppost.py -u <fbuser> -p <fbpassword> -m messagefile -g groupsfile -d chromedriver 
+python3 fbpostnew.py --username <username> --password <pwd> --message_file <msgfile> --groups_file <groupsURLsfile> --profile_url_file=<profilefile>
 ```
 
 ## redditpost.py
