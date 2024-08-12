@@ -19,16 +19,7 @@ python3 -m ensurepip --upgrade #install pip3
 pip3 install selenium #install selenium
 brew install dos2unix #install dos2unix
 ```
-- download the chromedriver (NOT chrome) according to your chrome version and OS from https://googlechromelabs.github.io/chrome-for-testing/#stable
-- cd $HOME
-- mv $HOME/Downloads/chromedriver-mac-arm64/chromedriver .
-- export PATH=$PATH:$HOME
-- which chromedriver
-- vi .zshrc
-- #!/bin/zsh
-- export PATH=$PATH:$HOME
-- :wq
-- xattr -d com.apple.quarantine $HOME/chromedriver #remove the quarantine attribute
+- You can optionally download the chromedriver (NOT chrome) according to your chrome version and OS from https://googlechromelabs.github.io/chrome-for-testing/#stable
 
 - Create a folder $BASE_FOLDER where you will store all the input and code files for this application.
 - copy python and awk scripts from repository into this directory
