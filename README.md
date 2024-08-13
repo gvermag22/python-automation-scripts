@@ -90,6 +90,46 @@ python3 fbgrouppost.py -h
 python3 fbpostnew.py --username <username> --password <pwd> --message_file <msgfile> --groups_file <groupsURLsfile> --profile_url_file=<profilefile>
 ```
 
+## getfbgroups.py
+
+This Python script is designed to automate the process of collecting Facebook group links. It uses Selenium WebDriver to interact with the Facebook website, log in to a user account, and scrape links to groups the user has joined.
+
+### Key Features
+
+1. **Automated Login**: The script logs into Facebook using provided credentials.
+2. **Profile Switching**: It can optionally switch to a specified Facebook profile after login.
+3. **Group Link Collection**: The script navigates to the user's joined groups page and collects unique group links.
+4. **Scrolling Mechanism**: It implements an infinite scroll to load all group links on the page.
+5. **Link Cleaning**: The collected links are cleaned to remove unnecessary parameters.
+6. **Logging**: Comprehensive logging is implemented for debugging and tracking the script's progress.
+7. **Error Handling**: The script includes try-except blocks to handle potential exceptions.
+
+### Main Components
+
+1. **Selenium Setup**: Uses Chrome WebDriver with custom options to disable notifications.
+2. **Login Function**: Handles the Facebook login process, including cookie acceptance if needed.
+3. **Profile Switching Function**: Allows switching to a specific Facebook profile if required.
+4. **Link Collection Function**: Scrolls through the joined groups page and collects unique group links.
+5. **Argument Parsing**: Uses argparse to handle command-line arguments for username, password, and optional profile URL.
+
+### Usage
+
+The script is run from the command line with the following arguments:
+- `--username`: Facebook username or email (required)
+- `--password`: Facebook password (required)
+- `--profileurl`: URL of the profile to switch to (optional)
+
+### Output
+
+The collected group links are saved to a file named `facebook_groups.txt`, with one link per line.
+
+### Notes
+
+- The script uses time delays to allow for page loading, which may need adjustment based on internet speed and Facebook's response time.
+- It's designed to handle cookie acceptance prompts and profile switching, making it versatile for different Facebook account setups.
+- The link collection process filters out non-group links and removes unnecessary URL parameters for cleaner results.
+
+This script can be particularly useful for users who need to collect links to their joined Facebook groups for various purposes, such as community management or data analysis.
 ## redditpost.py
 
 ### Input files:
