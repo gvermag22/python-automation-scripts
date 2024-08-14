@@ -38,7 +38,7 @@ awk -f fixcontacts.awk phonepos=2 namesuffix="ji" numbers.csv > numbers2.csv # f
 findcommon.sh file1.csv file2.csv # Use this to find common whatsapp numbers in file1.csv and file2.csv. This is important to avoid sending conflicting/duplicate messages to your audience
 ```
 
-## sendtext.py
+## sendwatext.py
 
 ### Input files:
 - numbers.csv: A comma delimited file with Whatsapp contact# and variables. Rows that should not be processed can be commented with # at the beginning of the line
@@ -50,18 +50,18 @@ findcommon.sh file1.csv file2.csv # Use this to find common whatsapp numbers in 
 
 ### usage examples:
 ```
-python3 sendtext.py -h # get help on usage
-python3 sendtext.py -n numbers.csv -m message.txt -d chromedriver # these argument values are defaulted even if the option is not specified
-python3 sendtext.py -n contacts.csv -m message1.txt # send message in message1.txt to contacts in contacts.csv. Note chromedriver file name is defaulted
+python3 sendwatext.py -h # get help on usage
+python3 sendwatext.py -n numbers.csv -m message.txt -d chromedriver # these argument values are defaulted even if the option is not specified
+python3 sendwatext.py -n contacts.csv -m message1.txt # send message in message1.txt to contacts in contacts.csv. Note chromedriver file name is defaulted
 ```
 
-## sendimage.py
+## sendwatextimage.py
 
 ### Input files:
 - numbers.csv: A comma delimited file with Whatsapp contact# and variables. Rows that should not be processed can be commented with # at the beginning of the line
 - message.txt: A file with text message and variables x1, x2, x3 where ever you want to switch the variables like 
 - image[1-3].jpeg: The names of upto 3 image files to be sent to whatsapp contacts
-- chromedriver: The chromedriver file for MacOS/unix
+
 
 ### Known issues
 - you cannot have newlines in the message text. it will hit enter for each newline in the message and the experience won't be good.
@@ -70,10 +70,10 @@ python3 sendtext.py -n contacts.csv -m message1.txt # send message in message1.t
 
 ### usage examples:
 ```
-python3 sendimage.py -h
-python3 sendtext.py -n numbers.csv -i image1.jpeg image2.jpeg image3.jpeg -d chromedriver # these argument values are defaulted when option is not specified
-python3 sendtext.py -n numbers.csv -i image1.jpeg -m imagemessage.txt -d chromedriver # Send image1.jpeg to contacts in numbers.csv with personalized text in imagemessage.txt. Tokens are taken fom colum 2 onwards in numbers.csv and substituted in imagemessage.txt before sending.
-python3 sendtext.py -n numbers.csv -i image1.jpeg image2.jpeg -m imagemessage.txt -d chromedriver # Send image1.jpeg and image2.jpeg to contacts in numbers.csv with personalized text in imagemessage.txt. Tokens are taken fom colum 2 onwards in numbers.csv and substituted in imagemessage.txt before sending. The text is ONLY sent along with image1.jpeg.
+python3 sendwatextimage.py -h
+python3 sendwatextimage.py -n numbers.csv -i image1.jpeg image2.jpeg image3.jpeg  # these argument values are defaulted when option is not specified
+python3 sendwatextimage.py -n numbers.csv -i image1.jpeg -m imagemessage.txt # Send image1.jpeg to contacts in numbers.csv with personalized text in imagemessage.txt. Tokens are taken fom colum 2 onwards in numbers.csv and substituted in imagemessage.txt before sending.
+python3 sendwatextimage.py -n numbers.csv -i image1.jpeg image2.jpeg -m imagemessage.txt # Send image1.jpeg and image2.jpeg to contacts in numbers.csv with personalized text in imagemessage.txt. Tokens are taken fom colum 2 onwards in numbers.csv and substituted in imagemessage.txt before sending. The text is ONLY sent along with image1.jpeg.
 ```
 
 ## fbgrouppost.py
