@@ -3,13 +3,14 @@ import time
 import logging
 import argparse
 import os
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
@@ -82,14 +83,21 @@ def post_in_group(driver, group_url, message):
     """Post a message in a Facebook group."""
     logger.info(f"Attempting to post in group: {group_url}")
     driver.get(group_url)
-    time.sleep(5)  # Initial delay to ensure the page loads
+    time.sleep(10)  # Initial delay to ensure the page loads
 
     try:
-        # Wait for the post box to be clickable and click it
-        post_box = WebDriverWait(driver, 25).until(
-            EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Write something...']"))
-        )
-        post_box.click()
+        try:
+
+            # Wait for the post box to be clickable and click it
+            post_box = WebDriverWait(driver, 25).until(
+                EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Write something...']"))
+            )
+            post_box.click()
+
+        except Exception as e:
+
+            logger.error(f"Group does not allow posting: " + group_url)
+            return
 
         time.sleep(5)
 
@@ -109,8 +117,8 @@ def post_in_group(driver, group_url, message):
         time.sleep(5)
 
         logger.info("Post successful")
-
-    except (TimeoutException, NoSuchElementException) as e:
+        
+    except (TimeoutException, NoSuchElementException, StaleElementReferenceException) as e:
         logger.error(f"Failed to post in group: {str(e)}")
         raise
 
@@ -127,6 +135,11 @@ def read_group_urls(groups_file):
     logger.info(f"Found {len(group_urls)} active group URLs")
     return group_urls
 
+def log_failed_url(url, filename):
+    """Log failed URL to a specified .err file."""
+    with open(filename, 'a') as f:
+        f.write(f"{url}\n")
+
 def main(username, password, message_file, groups_file, profile_url_file, headless):
     """Main function to execute the Facebook posting script."""
     if not os.path.isfile(message_file):
@@ -138,6 +151,10 @@ def main(username, password, message_file, groups_file, profile_url_file, headle
     if not os.path.isfile(profile_url_file):
         logger.error(f"Profile URL file '{profile_url_file}' does not exist.")
         return
+
+    # Create a timestamped filename for the error log
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    error_log_filename = f'failed_groups_{timestamp}.err'
 
     driver = setup_driver(headless)
 
@@ -160,6 +177,7 @@ def main(username, password, message_file, groups_file, profile_url_file, headle
                 time.sleep(10)  # Delay between posting in different groups
             except Exception as e:
                 logger.error(f"Error posting in group {group_url}: {str(e)}")
+                log_failed_url(group_url, error_log_filename)  # Log the failed URL
                 continue
 
     except Exception as e:
