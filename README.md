@@ -50,11 +50,6 @@ This script is intended to be used as a preprocessing step for the sendwatextima
 - Identifies and logs duplicate phone numbers.
 - Outputs a clean CSV file with no extra commas or unnecessary whitespace.
 
-### Requirements
-
-- Python 3.x
-- Standard Python libraries: `csv`, `re`, `sys`, `argparse`, `logging`
-
 ### Usage
 
 1. **Prepare your input CSV file**: Ensure that your CSV file contains the following columns:
@@ -69,46 +64,44 @@ This script is intended to be used as a preprocessing step for the sendwatextima
 
 2. **Run the script**: Use the following command to run the script:
 
-   ```bash
+   ```
    python outlook_contacts_processor.py input_file.csv output_file.csv [-v]
 
-input_file.csv: The path to the input CSV file containing Outlook contacts.
-output_file.csv: The path where the processed contacts will be saved.
--v or --verbose: Optional flag to enable verbose output for debugging.
-
-Example
-python outlook_contacts_processor.py contacts.csv processed_contacts.csv -v
-Output
-
-The script will generate an output CSV file (processed_contacts.csv) with the following columns:
-
-Phone: The formatted phone number.
-Name: The cleaned first name of the contact.
+   input_file.csv: The path to the input CSV file containing Outlook contacts.
+   output_file.csv: The path where the processed contacts will be saved.
+   -v or --verbose: Optional flag to enable verbose output for debugging.
+   
+   Example
+   python outlook_contacts_processor.py contacts.csv processed_contacts.csv -v
+   Output
+   
+   The script will generate an output CSV file (processed_contacts.csv) with the following columns:
+   
+   Phone: The formatted phone number.
+   Name: The cleaned first name of the contact.
+   ```
 
 ### Example Input and Output
 
-Input CSV (contacts.csv)
-First Name,Primary Phone,Home Phone,Mobile Phone,Business Phone
-John Doe,(123) 456-7890,,(987) 654-3210,
-Jane Smith,,(555) 555-5555,(444) 444-4444
-Alice Johnson,,,(222) 222-2222,1-800-555-0199
-Bob Brown,(111) 222-3333,,(111) 222-3333,
-Output CSV (processed_contacts.csv)
-Phone,Name
-+11234567890,John
-+19876543210,John
-+15555555555,Jane
-+14444444444,Jane
-+12222222222,Alice
-+18005550199,Alice
-+1112223333,Bob
-
-### Logging
-The script uses Python's built-in logging module to log information about the processing:
-
-It logs the number of unique contacts processed.
-It warns about any invalid or duplicate phone numbers found.
-
+#### Input CSV (contacts.csv)
+   ```
+   First Name,Primary Phone,Home Phone,Mobile Phone,Business Phone
+   John Doe,(123) 456-7890,,(987) 654-3210,
+   Jane Smith,,(555) 555-5555,(444) 444-4444
+   Alice Johnson,,,(222) 222-2222,1-800-555-0199
+   Bob Brown,(111) 222-3333,,(111) 222-3333,
+   ```
+#### Output CSV (processed_contacts.csv)
+   ```
+   Phone,Name
+   +11234567890,John
+   +19876543210,John
+   +15555555555,Jane
+   +14444444444,Jane
+   +12222222222,Alice
+   +18005550199,Alice
+   +1112223333,Bob
+   ```
 ## sendwatext.py
 
 ### Input files:
