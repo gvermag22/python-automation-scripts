@@ -1,17 +1,6 @@
 # python-automation-scripts
 This repository is a collection of miscellaneous python automation scripts for social media automation: 
 
-- sendtext.py and sendimage.py are for sending personalized Whatsapp text and image messages
-- redditpost.py is for posting personalized messages on reddit groups
-- fbgrouppost.py is for posting messages on facebook groups
-- youtubepost.py is for posting comments to top videos that are returned for specified keywords
-
-Right now, these run well on Unix or MacOS.
-
-- As of June 5 2022, these scripts are working fine. 
-- However, Whatsapp will keep changing the UI structure and the scripts are expected to break at some point. 
-- Mainly, the xpath value of UI/text components will need to be verified/updated.
-
 ## MacOS setup
 ```
 brew install python #install python
@@ -19,24 +8,9 @@ python3 -m ensurepip --upgrade #install pip3
 pip3 install selenium #install selenium
 brew install dos2unix #install dos2unix
 ```
-- You can optionally download the chromedriver (NOT chrome) according to your chrome version and OS from https://googlechromelabs.github.io/chrome-for-testing/#stable
-
-- Create a folder $BASE_FOLDER where you will store all the input and code files for this application.
+- Download VS code. It's really easy to manage and run the scripts with it.
+- Create a folder where you will store all the input and code files for this application.
 - copy python and awk scripts from repository into this directory
-
-## Contacts setup
-find
-cd $BASE_FOLDER
-
-Before running any of the python scripts, you should run these scripts to sanitize and prepare your contacts list:
-
-```
-dos2unix numbers.csv # remove special return characters from the csv file to avoid weird errors. This is important. 
-
-awk -f fixcontacts.awk phonepos=2 namesuffix="ji" numbers.csv > numbers2.csv # format the contacts in whatsapp friendly format (+1XXXXXXXXXX) and put a suffix to name if needed (cultural nuance). This assumes numbers.csv will have only two fields. You can extend it as needed for more fields.
-
-findcommon.sh file1.csv file2.csv # Use this to find common whatsapp numbers in file1.csv and file2.csv. This is important to avoid sending conflicting/duplicate messages to your audience
-```
 
 ## convertcontacts.py
 
@@ -102,35 +76,13 @@ This script is intended to be used as a preprocessing step for the sendwatextima
    +18005550199,Alice
    +1112223333,Bob
    ```
-## sendwatext.py
-
-### Input files:
-- numbers.csv: A comma delimited file with Whatsapp contact# and variables. Rows that should not be processed can be commented with # at the beginning of the line
-- message.txt: A file with text message and variables x1, x2, x3 where ever you want to switch the variables like 
-- chromedriver: The chromedriver file for MacOS/unix
-
-### Known issues
-- after few hours, the connection times out, so you have to run the script again against the numbers.csv.err file at the end
-
-### usage examples:
-```
-python3 sendwatext.py -h # get help on usage
-python3 sendwatext.py -n numbers.csv -m message.txt -d chromedriver # these argument values are defaulted even if the option is not specified
-python3 sendwatext.py -n contacts.csv -m message1.txt # send message in message1.txt to contacts in contacts.csv. Note chromedriver file name is defaulted
-```
 
 ## sendwatextimage.py
 
 ### Input files:
 - numbers.csv: A comma delimited file with Whatsapp contact# and variables. Rows that should not be processed can be commented with # at the beginning of the line
 - message.txt: A file with text message and variables x1, x2, x3 where ever you want to switch the variables like 
-- image[1-3].jpeg: The names of upto 3 image files to be sent to whatsapp contacts
-
-
-### Known issues
-- you cannot have newlines in the message text. it will hit enter for each newline in the message and the experience won't be good.
-- you need to switch focus to the automated whatsapp window and keep it so till all images have been sent
-- after few hours, the connection times out, so you have to run the script again against the numbers.csv.err file at the end
+- image[1-3].jpeg: The names of upto 3 image files or video files to be sent to whatsapp contacts. This is an optional parameter.
 
 ### usage examples:
 ```
@@ -194,6 +146,7 @@ The collected group links are saved to a file named `facebook_groups.txt`, with 
 - The link collection process filters out non-group links and removes unnecessary URL parameters for cleaner results.
 
 This script can be particularly useful for users who need to collect links to their joined Facebook groups for various purposes, such as community management or data analysis.
+
 ## redditpost.py
 
 ### Input files:
