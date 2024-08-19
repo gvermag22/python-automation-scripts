@@ -15,7 +15,7 @@ brew install dos2unix #install dos2unix
 
 ## convertcontacts.py
 
-This script converts outlook csv file into an input file to run sendwatextimage.py script. It ensures that phone numbers are standardized and that each contact's multiple phone numbers are handled correctly.
+This script converts outlook csv file into an input file to run sendwhatsapp.py script. It ensures that phone numbers are standardized and that each contact's multiple phone numbers are handled correctly.
 
 ### Features
 
@@ -27,7 +27,7 @@ This script converts outlook csv file into an input file to run sendwatextimage.
 
 ### Usage
 
-1. **Prepare your input CSV file**: Ensure that your CSV file contains the following columns:
+1. **Prepare your input OUTLOOK CSV file**: Ensure that your CSV file contains the following columns:
    - `First Name`
    - `Primary Phone`
    - `Home Phone`
@@ -98,6 +98,8 @@ This script automates sending personalized WhatsApp messages with attachments to
 - Selenium WebDriver
 - Chrome browser
 - ChromeDriver (ensure it's compatible with your Chrome version)
+- 
+- ==>> DISABLE any laptop energy saving features for shutting off monitor/hard drive with prolonged inactivity. This is because the script will run for long.
 
 ### Usage
 Command-line Arguments
