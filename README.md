@@ -8,7 +8,8 @@ python3 -m ensurepip --upgrade #install pip3
 pip3 install selenium #install selenium
 brew install dos2unix #install dos2unix
 ```
-- Download VS code. It's really easy to manage and run the scripts with it.
+- Download VS code IDE application. It's really easy to manage and run the scripts with it on desktop.
+- MAKE SURE you disable screen/laptop sleep/off or such energy saving features because the scripts will run for long time.
 - Create a folder where you will store all the input and code files for this application.
 - copy python and awk scripts from repository into this directory
 
