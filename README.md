@@ -156,16 +156,20 @@ Logging: Logs successful sends in a .sent file and errors in a .err file.
 
 ### Notes
 Ensure WhatsApp Web is properly set up in your Chrome browser.
-You may need to scan the QR code on the first run or if the session expires.
+You would need to scan the QR code on the first run or if the session expires.
 The script waits for 3 minutes for the initial WhatsApp Web page load. Adjust this in the code if needed.
-Troubleshooting
-If the page load hangs after 5 minutes:
+
+### Troubleshooting
+If the Whatsapp home page load hangs after 3 minutes:
 Re-run the script
 Click LOGOFF on the Chrome window
 Scan the QR code again
+
 To clear the WhatsApp cache:
+```
 Unix/Linux: rm -rf /tmp/whatsapp
 Windows: Delete the contents of %USERPROFILE%\AppData\Local\Google\Chrome\User Data
+```
 
 ## fbgrouppost.py
 
