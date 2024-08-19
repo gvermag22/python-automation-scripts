@@ -14,7 +14,7 @@ brew install dos2unix #install dos2unix
 
 ## convertcontacts.py
 
-This script is intended to be used as a preprocessing step for the sendwatextimage.py script, which requires a properly formatted list of contacts to send messages. It processes a CSV file containing Outlook contacts, formats phone numbers, and prepares the data for use with the `sendwatextimage.py` script. It ensures that phone numbers are standardized and that each contact's multiple phone numbers are handled correctly.
+This script converts outlook csv file into an input file to run sendwatextimage.py script. It ensures that phone numbers are standardized and that each contact's multiple phone numbers are handled correctly.
 
 ### Features
 
