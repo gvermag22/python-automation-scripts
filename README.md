@@ -9,7 +9,7 @@ pip3 install selenium #install selenium
 brew install dos2unix #install dos2unix
 ```
 - Download VS code IDE application. It's really easy to manage and run the scripts with it on desktop.
-- MAKE SURE you disable screen/laptop sleep/off or such energy saving features because the scripts will run for long time.
+- MAKE SURE you disable screen/laptop sleep/off or such energy saving features because the scripts will run for long time without user input.
 - Create a folder where you will store all the input and code files for this application.
 - copy python and awk scripts from repository into this directory
 
