@@ -101,34 +101,44 @@ This script automates sending personalized WhatsApp messages with attachments to
 
 ### Usage
 Command-line Arguments
+
+```
 -n, --numbersfile: CSV file containing WhatsApp contact numbers (default: numbers.csv).
 -m, --messagefile: Text file containing the message template (default: message.txt).
 -a, --attachments: Attachment files to send (images, videos, etc.).
+```
 
 ### Input Files
 numbers.csv: 
 
 A comma-delimited file with WhatsApp contact numbers and variables.
+```
 Format: phone_number,var1,var2,var3
 Example:
 1234567890,John,Engineer,New York
 9876543210,Jane,Designer,San Francisco
+```
 
 message.txt:
 
 A text file containing the message template with variables x1, x2, x3.
 Example:
+```
 Hello x1,
 We're excited to have you as a x2 in x3!
 Attachment Files:
+```
 
 Image or video files to be sent (optional).
 Supported formats: JPEG, PNG, MP4, etc.
 
 ### Examples
+
+```
 python sendwhatsapp.py -h
 python sendwhatsapp.py -n contacts.csv -a image1.jpeg image2.jpeg
 python sendwhatsapp.py -n leads.csv -a product_video.mp4 -m sales_pitch.txt
+```
 
 ### Behavior and Logic
 Initialization: Parses arguments and validates input files.
