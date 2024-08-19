@@ -78,20 +78,84 @@ This script converts outlook csv file into an input file to run sendwatextimage.
    +1112223333,Bob
    ```
 
-## sendwatextimage.py
+## sendwhatsapp.py
 
-### Input files:
-- numbers.csv: A comma delimited file with Whatsapp contact# and variables. Rows that should not be processed can be commented with # at the beginning of the line
-- message.txt: A file with text message and variables x1, x2, x3 where ever you want to switch the variables like 
-- image[1-3].jpeg: The names of upto 3 image files or video files to be sent to whatsapp contacts. This is an optional parameter.
+This script automates sending personalized WhatsApp messages with attachments to multiple contacts using Selenium WebDriver.
 
-### usage examples:
-```
-python3 sendwatextimage.py -h
-python3 sendwatextimage.py -n numbers.csv -i image1.jpeg image2.jpeg image3.jpeg  # these argument values are defaulted when option is not specified
-python3 sendwatextimage.py -n numbers.csv -i image1.jpeg -m imagemessage.txt # Send image1.jpeg to contacts in numbers.csv with personalized text in imagemessage.txt. Tokens are taken fom colum 2 onwards in numbers.csv and substituted in imagemessage.txt before sending.
-python3 sendwatextimage.py -n numbers.csv -i image1.jpeg image2.jpeg -m imagemessage.txt # Send image1.jpeg and image2.jpeg to contacts in numbers.csv with personalized text in imagemessage.txt. Tokens are taken fom colum 2 onwards in numbers.csv and substituted in imagemessage.txt before sending. The text is ONLY sent along with image1.jpeg.
-```
+### Features
+
+- **Personalized Messaging**: Send customized text messages to multiple WhatsApp contacts.
+- **Attachments**: Attach up to 3 images or video files per message.
+- **Variable Substitution**: Use variables (x1, x2, x3) in your messages for personalization.
+- **CSV Input**: Read contact numbers and variables from a CSV file.
+- **Logging**: Keep track of successful sends and errors in separate log files.
+- **Cross-Platform**: Compatible with Windows, macOS, and Linux.
+- **Configurable Wait Times**: Adjust the wait time for WhatsApp Web to load.
+
+### Prerequisites
+
+- Python 3.x
+- Selenium WebDriver
+- Chrome browser
+- ChromeDriver (ensure it's compatible with your Chrome version)
+
+### Usage
+Command-line Arguments
+-n, --numbersfile: CSV file containing WhatsApp contact numbers (default: numbers.csv).
+-m, --messagefile: Text file containing the message template (default: message.txt).
+-a, --attachments: Attachment files to send (images, videos, etc.).
+
+### Input Files
+numbers.csv: 
+
+A comma-delimited file with WhatsApp contact numbers and variables.
+Format: phone_number,var1,var2,var3
+Example:
+1234567890,John,Engineer,New York
+9876543210,Jane,Designer,San Francisco
+
+message.txt:
+
+A text file containing the message template with variables x1, x2, x3.
+Example:
+Hello x1,
+We're excited to have you as a x2 in x3!
+Attachment Files:
+
+Image or video files to be sent (optional).
+Supported formats: JPEG, PNG, MP4, etc.
+
+### Examples
+python sendwhatsapp.py -h
+python sendwhatsapp.py -n contacts.csv -a image1.jpeg image2.jpeg
+python sendwhatsapp.py -n leads.csv -a product_video.mp4 -m sales_pitch.txt
+
+### Behavior and Logic
+Initialization: Parses arguments and validates input files.
+WebDriver Setup: Initializes Chrome WebDriver with a custom user data directory.
+WhatsApp Web Loading: Loads WhatsApp Web and waits for 3 minutes for full page load.
+
+### Message Sending Process:
+For each contact in the CSV file:
+Navigates to the WhatsApp chat for that number.
+Personalizes the message using variables from the CSV.
+Sends the personalized message.
+Sends attachments one by one (if provided).
+Adds a random delay (5-10 seconds) between actions.
+Logging: Logs successful sends in a .sent file and errors in a .err file.
+
+### Notes
+Ensure WhatsApp Web is properly set up in your Chrome browser.
+You may need to scan the QR code on the first run or if the session expires.
+The script waits for 3 minutes for the initial WhatsApp Web page load. Adjust this in the code if needed.
+Troubleshooting
+If the page load hangs after 5 minutes:
+Re-run the script
+Click LOGOFF on the Chrome window
+Scan the QR code again
+To clear the WhatsApp cache:
+Unix/Linux: rm -rf /tmp/whatsapp
+Windows: Delete the contents of %USERPROFILE%\AppData\Local\Google\Chrome\User Data
 
 ## fbgrouppost.py
 
