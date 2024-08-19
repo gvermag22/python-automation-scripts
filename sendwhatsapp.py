@@ -23,47 +23,38 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 def parse_arguments():
     """Parse command-line arguments and provide usage example"""
-    parser = argparse.ArgumentParser(description='Send WhatsApp messages with optional images.',
+    parser = argparse.ArgumentParser(description='Send WhatsApp messages with attachments.',
                                      formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('-n', '--numbersfile', default='numbers.csv', help='file containing WhatsApp numbers')
     parser.add_argument('-m', '--messagefile', default='message.txt', help='file containing text message')
-    parser.add_argument('-i', '--imagefiles', nargs='*', default=None, help='optional image files to be sent')
-
+    parser.add_argument('-a', '--attachments', nargs='+', default=[''], help='attachment files to be sent (images, videos, etc.)')
     parser.usage = parser.format_help()
     parser.usage += "\nExample usage:\n"
-    parser.usage += " python script.py -n numbers.csv -m message.txt -i image1.jpg image2.jpg\n"
-    parser.usage += " python script.py -n numbers.csv -m message.txt  # No images\n"
-
+    parser.usage += " python script.py -n numbers.csv -m message.txt -a image1.jpg video1.mp4\n"
     args = parser.parse_args()
-
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
         print("\nRunning with default values...")
-
     return args
 
-def prepare_image_paths(args):
-    """Prepare absolute paths for image files"""
-    if args.imagefiles is None:
-        return []
-
+def prepare_attachment_paths(args):
+    """Prepare absolute paths for attachment files"""
     OSname = platform.system()
-    if OSname in ["Darwin", "Linux"]:  # MacOS/Unix
+    if OSname in ["Darwin", "Linux"]:
         pwd = subprocess.getoutput('pwd')
         delim = '/'
     elif OSname == "Windows":
         pwd = subprocess.getoutput('cd')
         delim = '\\'
 
-    image_files = []
-    for img in args.imagefiles:
-        img_path = os.path.join(pwd, img)
-        if not os.path.exists(img_path):
-            logging.error(f'Image file {img_path} does not exist')
+    attachment_files = []
+    for attachment in args.attachments:
+        attachment_path = os.path.join(pwd, attachment)
+        if not os.path.exists(attachment_path):
+            logging.error(f'Attachment file {attachment_path} does not exist')
             sys.exit(1)
-        image_files.append(img_path)
-
-    return image_files
+        attachment_files.append(attachment_path)
+    return attachment_files
 
 def validate_files(args):
     """Validate existence of input files"""
@@ -116,17 +107,17 @@ def initialize_driver():
     time.sleep(2)
     return driver
 
-def send_message(driver, number, message, images, vars):
-    """Send message and images to a WhatsApp number"""
+def send_message(driver, number, message, attachments, vars):
+    """Send message and attachments to a WhatsApp number"""
     driver.get(f'https://web.whatsapp.com/send/?phone={number}')
-    wait = WebDriverWait(driver, 20)  # Increased timeout to 20 seconds
+    wait = WebDriverWait(driver, 20)
 
     try:
         message_box = wait.until(EC.presence_of_element_located((By.XPATH, '//div[@role="textbox" and @data-tab="10" and @aria-placeholder="Type a message"]')))
         logging.info(f"Message input box found for number {number}")
     except Exception as e:
         logging.error(f"Message input box not found for number {number}: {str(e)}")
-        raise
+        return False
 
     time.sleep(20)  # Additional wait after page load
 
@@ -136,83 +127,85 @@ def send_message(driver, number, message, images, vars):
             new_message = message.replace("x1", vars['var1']).replace("x2", vars['var2']).replace("x3", vars['var3'])
             logging.info(f"Attempting to send message: {new_message}")
             message_box.clear()
-
-            # Split the message into individual lines while stripping out end of line character
             message_lines_without_EOL = new_message.split('\n')
-
-            # Send each line one at a time
             for aline in message_lines_without_EOL:
                 message_box.send_keys(aline)
-                # Type SHIFT ENTER to simulate a new EOL character in the web window without creating a new message
                 message_box.send_keys(Keys.SHIFT, '\n')
-
             logging.info("Message entered in the text box")
             time.sleep(10)
-
             message_box.send_keys(Keys.ENTER)
             logging.info("Enter key pressed to send message")
             time.sleep(5)
         except Exception as e:
             logging.error(f"Failed to send text message to {number}: {str(e)}")
+            return False
 
-    # Then send images
-    if images and len(images) > 0:
-        logging.info(f"Sending {len(images)} image(s) to {number}")
-        for i, img in enumerate(images):
+    # Then send attachments
+    if attachments and len(attachments) > 0:
+        logging.info(f"Sending {len(attachments)} attachment(s) to {number}")
+        for i, attachment in enumerate(attachments):
             try:
                 attachment_box = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@title="Attach"]')))
                 logging.info(f"Attachment button found for number {number}")
                 attachment_box.click()
-                
-                image_box = wait.until(EC.presence_of_element_located((By.XPATH, '//input[@accept="image/*,video/mp4,video/3gpp,video/quicktime"]')))
-                logging.info(f"Image input box found for number {number}")
-                image_box.send_keys(img)
-                
+                media_box = wait.until(EC.presence_of_element_located((By.XPATH, '//input[@accept="image/*,video/mp4,video/3gpp,video/quicktime"]')))
+                logging.info(f"Media input box found for number {number}")
+                media_box.send_keys(attachment)
                 send_button = wait.until(EC.element_to_be_clickable((By.XPATH, '//span[@data-icon="send"]')))
                 logging.info(f"Send button found for number {number}")
                 send_button.click()
-                
-                logging.info(f'Image {i+1}/{len(images)} ({img}) sent successfully to {number}')
+                logging.info(f'Attachment {i+1}/{len(attachments)} ({attachment}) sent successfully to {number}')
                 time.sleep(random.randrange(5, 10))
             except Exception as e:
-                logging.exception(f'Could not send image {i+1}/{len(images)} ({img}) to {number}: {str(e)}')
-                raise
+                logging.exception(f'Could not send attachment {i+1}/{len(attachments)} ({attachment}) to {number}: {str(e)}')
+                return False
     else:
-        logging.info(f"No images specified for sending to {number}")
+        logging.info(f"No attachments specified for sending to {number}")
+
+    return True
 
 def main():
-    print('\n')
-    print("make sure you format the csv file if downloaded from Google sheets")
-    print("dos2unix contacts.csv")
-    print('awk -f fixcontacts.awk ')
-    print('\n')
 
-    """Main function to orchestrate the WhatsApp messaging process"""
     args = parse_arguments()
     file_numbers, file_msg = validate_files(args)
     logging.info(f"Message file path: {os.path.abspath(file_msg)}")
-    
-    image_files = prepare_image_paths(args)
-    if image_files:
-        logging.info(f"Number of image files to send: {len(image_files)}")
-    else:
-        logging.info("No image files specified")
-
+    attachment_files = prepare_attachment_paths(args)
     data = read_csv_data(file_numbers)
     message = read_message(file_msg)
     logging.info(f"Message read from file (first 50 characters): {message[:50]}")
 
     driver = initialize_driver()
-    error_filename = f"sendwatextimage.py.{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.err"
+
+    logging.info(f"ATTENTION:")
+    logging.info(f"Get your Whatsapp app ready. Open Settings->Linked Devices-> Enter passcode and open QR code scanner.. then press ENTER..")
+    logging.info(f"TROUBLESHOOTING TIPS:")
+    logging.info(f"After the QR scan, if the page load hangs after 5 mins, just re-run the script, click LOGOFF on the chrome window, scan the QR code again.")
+    logging.info(f"You can also clean the earlier whatsapp cache with $rm -rf /tmp/whatsapp and re-run the script\n")
+    input("PRESS ENTER to proceed")
+
+    # Load WhatsApp Web and wait for 5 minutes
+    driver.get('https://web.whatsapp.com/')
+    logging.info("Waiting 3 minutes for initial WhatsApp Web page to load... If this is too less for your account, increase it in the code and re-rurun")
+    time.sleep(180)  # 3 minutes in seconds
+
+    error_filename = f"sendwhatsapp.py.{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.err"
+    sent_filename = f"sendwhatsapp.py.{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.sent"
 
     try:
         for i, number in enumerate(data['numbers']):
             try:
                 logging.info(f'Sending message(s) to {number}: {i+1} of {len(data["numbers"])}')
-                if i == 0:
-                    input("After scanning QR code, press Enter to continue...")
-                send_message(driver, number, message, image_files,
-                             {'var1': data['var1'][i], 'var2': data['var2'][i], 'var3': data['var3'][i]})
+
+                success = send_message(driver, number, message, attachment_files,
+                                       {'var1': data['var1'][i], 'var2': data['var2'][i], 'var3': data['var3'][i]})
+                
+                if success:
+                    with open(sent_filename, "a") as sent_file:
+                        timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        sent_file.write(f"{timestamp},{number},{data['var1'][i]},{data['var2'][i]},{data['var3'][i]}\n")
+                else:
+                    with open(error_filename, "a") as error_file:
+                        error_file.write(f"{number},{data['var1'][i]},{data['var2'][i]},{data['var3'][i]}\n")
             except Exception as e:
                 logging.exception(f'Could not send message to {number}: {str(e)}')
                 with open(error_filename, "a") as error_file:
@@ -222,6 +215,8 @@ def main():
 
     if os.path.exists(error_filename):
         logging.info(f'\n\nSome messages could not be sent. Error file: {error_filename}')
+    if os.path.exists(sent_filename):
+        logging.info(f'\n\nSuccessfully sent messages are logged in: {sent_filename}')
 
 if __name__ == "__main__":
     main()
