@@ -126,9 +126,9 @@ Example:
 ```
 Hello x1,
 We're excited to have you as a x2 in x3!
-Attachment Files:
 ```
 
+Attachment Files:
 Image or video files to be sent (optional).
 Supported formats: JPEG, PNG, MP4, etc.
 
