@@ -108,6 +108,7 @@ Command-line Arguments
 -n, --numbersfile: CSV file containing WhatsApp contact numbers (default: numbers.csv).
 -m, --messagefile: Text file containing the message template (default: message.txt).
 -a, --attachments: Attachment files to send (images, videos, etc.).
+-w, --wait: How long to wait to let the Whatsapp web home load on computer
 ```
 
 ### Input Files
@@ -138,14 +139,16 @@ Supported formats: JPEG, PNG, MP4, etc.
 
 ```
 python sendwhatsapp.py -h
-python sendwhatsapp.py -n contacts.csv -a image1.jpeg image2.jpeg
+python sendwhatsapp.py -n contacts.csv -a image1.jpeg image2.jpeg -w 2
+python sendwhatsapp.py -n leads.csv -a product_video.mp4 -m sales_pitch.txt -w 5
 python sendwhatsapp.py -n leads.csv -a product_video.mp4 -m sales_pitch.txt
+
 ```
 
 ### Behavior and Logic
 Initialization: Parses arguments and validates input files.
 WebDriver Setup: Initializes Chrome WebDriver with a custom user data directory.
-WhatsApp Web Loading: Loads WhatsApp Web and waits for 3 minutes for full page load.
+WhatsApp Web Loading: Loads WhatsApp Web and waits for -wait X minutes argument value for full Whatsapp web home page load only for the first time.
 
 ### Message Sending Process:
 For each contact in the CSV file:
@@ -159,10 +162,9 @@ Logging: Logs successful sends in a .sent file and errors in a .err file.
 ### Notes
 Ensure WhatsApp Web is properly set up in your Chrome browser.
 You would need to scan the QR code on the first run or if the session expires.
-The script waits for 3 minutes for the initial WhatsApp Web page load. Adjust this in the code if needed.
 
 ### Troubleshooting
-If the Whatsapp home page load hangs after 3 minutes:
+If the Whatsapp home page load hangs after -wait X minutes argument value minutes:
 Re-run the script
 Click LOGOFF on the Chrome window
 Scan the QR code again
