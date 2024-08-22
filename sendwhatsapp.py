@@ -27,10 +27,11 @@ def parse_arguments():
                                      formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('-n', '--numbersfile', default='numbers.csv', help='file containing WhatsApp numbers')
     parser.add_argument('-m', '--messagefile', default='message.txt', help='file containing text message')
-    parser.add_argument('-a', '--attachments', nargs='+', default=[''], help='attachment files to be sent (images, videos, etc.)')
+    parser.add_argument('-a', '--attachments', nargs='*', default=[], help='attachment files to be sent (images, videos, etc.)')
+    parser.add_argument('-w', '--wait', type=int, default=3, help='wait time in minutes for WhatsApp Web to load (default: 3)')
     parser.usage = parser.format_help()
     parser.usage += "\nExample usage:\n"
-    parser.usage += " python script.py -n numbers.csv -m message.txt -a image1.jpg video1.mp4\n"
+    parser.usage += " python script.py -n numbers.csv -m message.txt -a image1.jpg video1.mp4 -w 5\n"
     args = parser.parse_args()
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
@@ -46,7 +47,7 @@ def prepare_attachment_paths(args):
     elif OSname == "Windows":
         pwd = subprocess.getoutput('cd')
         delim = '\\'
-
+    
     attachment_files = []
     for attachment in args.attachments:
         attachment_path = os.path.join(pwd, attachment)
@@ -111,7 +112,7 @@ def send_message(driver, number, message, attachments, vars):
     """Send message and attachments to a WhatsApp number"""
     driver.get(f'https://web.whatsapp.com/send/?phone={number}')
     wait = WebDriverWait(driver, 20)
-
+    
     try:
         message_box = wait.until(EC.presence_of_element_located((By.XPATH, '//div[@role="textbox" and @data-tab="10" and @aria-placeholder="Type a message"]')))
         logging.info(f"Message input box found for number {number}")
@@ -141,31 +142,31 @@ def send_message(driver, number, message, attachments, vars):
             return False
 
     # Then send attachments
-    if attachments and len(attachments) > 0:
+    if attachments and attachments[0]:
         logging.info(f"Sending {len(attachments)} attachment(s) to {number}")
         for i, attachment in enumerate(attachments):
-            try:
-                attachment_box = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@title="Attach"]')))
-                logging.info(f"Attachment button found for number {number}")
-                attachment_box.click()
-                media_box = wait.until(EC.presence_of_element_located((By.XPATH, '//input[@accept="image/*,video/mp4,video/3gpp,video/quicktime"]')))
-                logging.info(f"Media input box found for number {number}")
-                media_box.send_keys(attachment)
-                send_button = wait.until(EC.element_to_be_clickable((By.XPATH, '//span[@data-icon="send"]')))
-                logging.info(f"Send button found for number {number}")
-                send_button.click()
-                logging.info(f'Attachment {i+1}/{len(attachments)} ({attachment}) sent successfully to {number}')
-                time.sleep(random.randrange(5, 10))
-            except Exception as e:
-                logging.exception(f'Could not send attachment {i+1}/{len(attachments)} ({attachment}) to {number}: {str(e)}')
-                return False
+            if attachment:
+                try:
+                    attachment_box = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@title="Attach"]')))
+                    logging.info(f"Attachment button found for number {number}")
+                    attachment_box.click()
+                    media_box = wait.until(EC.presence_of_element_located((By.XPATH, '//input[@accept="image/*,video/mp4,video/3gpp,video/quicktime"]')))
+                    logging.info(f"Media input box found for number {number}")
+                    media_box.send_keys(attachment)
+                    send_button = wait.until(EC.element_to_be_clickable((By.XPATH, '//span[@data-icon="send"]')))
+                    logging.info(f"Send button found for number {number}")
+                    send_button.click()
+                    logging.info(f'Attachment {i+1}/{len(attachments)} ({attachment}) sent successfully to {number}')
+                    time.sleep(random.randrange(5, 10))
+                except Exception as e:
+                    logging.exception(f'Could not send attachment {i+1}/{len(attachments)} ({attachment}) to {number}: {str(e)}')
+                    return False
     else:
         logging.info(f"No attachments specified for sending to {number}")
 
     return True
 
 def main():
-
     args = parse_arguments()
     file_numbers, file_msg = validate_files(args)
     logging.info(f"Message file path: {os.path.abspath(file_msg)}")
@@ -173,20 +174,19 @@ def main():
     data = read_csv_data(file_numbers)
     message = read_message(file_msg)
     logging.info(f"Message read from file (first 50 characters): {message[:50]}")
-
     driver = initialize_driver()
-
+    
     logging.info(f"ATTENTION:")
-    logging.info(f"Get your Whatsapp app ready. Open Settings->Linked Devices-> Enter passcode and open QR code scanner.. then press ENTER..")
+    logging.info(f"Get your WhatsApp app ready. Open Settings->Linked Devices-> Enter passcode and open QR code scanner.. then press ENTER..")
     logging.info(f"TROUBLESHOOTING TIPS:")
-    logging.info(f"After the QR scan, if the page load hangs after 5 mins, just re-run the script, click LOGOFF on the chrome window, scan the QR code again.")
-    logging.info(f"You can also clean the earlier whatsapp cache with $rm -rf /tmp/whatsapp and re-run the script\n")
+    logging.info(f"After the QR scan, if the page load hangs after {args.wait} mins, just re-run the script, click LOGOFF on the chrome window, scan the QR code again.")
+    logging.info(f"You can also clean the earlier WhatsApp cache with $rm -rf /tmp/whatsapp and re-run the script\n")
     input("PRESS ENTER to proceed")
-
-    # Load WhatsApp Web and wait for 5 minutes
+    
+    # Load WhatsApp Web and wait for the specified time
     driver.get('https://web.whatsapp.com/')
-    logging.info("Waiting 3 minutes for initial WhatsApp Web page to load... If this is too less for your account, increase it in the code and re-rurun")
-    time.sleep(180)  # 3 minutes in seconds
+    logging.info(f"Waiting {args.wait} minutes for initial WhatsApp Web page to load... If this is too short for your account, increase it using the -w or --wait argument")
+    time.sleep(args.wait * 60)  # Convert minutes to seconds
 
     error_filename = f"sendwhatsapp.py.{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.err"
     sent_filename = f"sendwhatsapp.py.{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.sent"
@@ -195,10 +195,8 @@ def main():
         for i, number in enumerate(data['numbers']):
             try:
                 logging.info(f'Sending message(s) to {number}: {i+1} of {len(data["numbers"])}')
-
                 success = send_message(driver, number, message, attachment_files,
                                        {'var1': data['var1'][i], 'var2': data['var2'][i], 'var3': data['var3'][i]})
-                
                 if success:
                     with open(sent_filename, "a") as sent_file:
                         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
