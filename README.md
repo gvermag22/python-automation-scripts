@@ -99,7 +99,7 @@ This script automates sending personalized WhatsApp messages with attachments to
 - Selenium WebDriver
 - Chrome browser
 - ChromeDriver (ensure it's compatible with your Chrome version)
-- 
+  
 - ==>> DISABLE any laptop energy saving features for shutting off monitor/hard drive with prolonged inactivity. This is because the script will run for long.
 
 ### Usage
@@ -182,7 +182,7 @@ Windows: Delete the contents of %USERPROFILE%\AppData\Local\Google\Chrome\User D
 - messagefile: A file with main body message for FB group 
 - groupsfile: A file with list of FB group URLs. Rows that should not be processed can be commented with # at the beginning
 - profilefile: A file with URL of the profile from where you want to post
-- 
+  
 
 ### usage examples:
 ```
