@@ -260,3 +260,39 @@ python3 redditpost.py -u <Reddituser> -p <Redditpassword> -t titlefile -m messag
 python3 youtubepost.py -h
 python3 youtubepost.py -k keywordsfile -c commentsfile -v videosfile -o overwritevideosfileflag -s nofscrolls -d chromedriver 
 ```
+## sendlinkedinmessages.py
+
+This Python script is designed to automate the process of sending personalized messages to LinkedIn profiles. It uses Selenium WebDriver to interact with the LinkedIn website, log in to a user account, and send messages to specified profiles.
+
+### Key Features
+- Automated Login: The script logs into LinkedIn using provided credentials.
+- Message Personalization: It includes the recipient's name in the message for a personalized touch.
+- Attachment Support: The script can optionally attach a file to the message.
+- Error Handling: Comprehensive logging and error handling are implemented for debugging and tracking the script's progress.
+- Input File Support: The script reads profiles and messages from input files for easy management.
+
+### Main Components
+- Selenium Setup: Uses Chrome WebDriver with custom options to disable notifications.
+- Login Function: Handles the LinkedIn login process.
+- Message Sending Function: Sends personalized messages to specified profiles with optional attachments.
+- Argument Parsing: Uses argparse to handle command-line arguments for username, password, input file, message file, and optional attachment file.
+
+### Usage
+The script is run from the command line with the following arguments:
+
+--username: LinkedIn username or email (required)
+
+--password: LinkedIn password (required)
+
+--inputfile: Path to the input file containing list of names and profile URLs in comma separated format (required)
+
+--messagefile: Path to the input file containing the message (required)
+
+--attachmentfile: Path to the attachment file (optional) # not working yet
+
+```
+python3 sendlinkedinmessage.py --username [username] --password [pwd] --inputfile [file with list of names, linkedin profiles] --messagefile [message file]
+```
+
+### Output
+The script logs its progress and any errors to the console. Profiles for which messages could not be sent are logged in a notsent.log file with a timestamp.
