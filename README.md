@@ -262,7 +262,7 @@ python3 youtubepost.py -k keywordsfile -c commentsfile -v videosfile -o overwrit
 ```
 ## sendlinkedinDMs.py
 
-This Python script is designed to automate the process of sending personalized messages to LinkedIn profiles. It uses Selenium WebDriver to interact with the LinkedIn website, log in to a user account, and send messages to specified profiles.
+This Python script is designed to automate the process of sending personalized CONNECTION messages to LinkedIn profiles. It uses Selenium WebDriver to interact with the LinkedIn website, log in to a user account, and send messages to specified profiles.
 
 ### Key Features
 - Automated Login: The script logs into LinkedIn using provided credentials.
