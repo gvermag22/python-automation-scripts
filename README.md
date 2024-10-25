@@ -260,7 +260,7 @@ python3 redditpost.py -u <Reddituser> -p <Redditpassword> -t titlefile -m messag
 python3 youtubepost.py -h
 python3 youtubepost.py -k keywordsfile -c commentsfile -v videosfile -o overwritevideosfileflag -s nofscrolls -d chromedriver 
 ```
-## sendlinkedinmessages.py
+## sendlinkedinDMs.py
 
 This Python script is designed to automate the process of sending personalized messages to LinkedIn profiles. It uses Selenium WebDriver to interact with the LinkedIn website, log in to a user account, and send messages to specified profiles.
 
@@ -294,5 +294,43 @@ The script is run from the command line with the following arguments:
 python3 sendlinkedinmessage.py --username [username] --password [pwd] --inputfile [file with list of names, linkedin profiles] --messagefile [message file]
 ```
 
-### Output
-The script logs its progress and any errors to the console. Profiles for which messages could not be sent are logged in a notsent.log file with a timestamp.
+## sendlinkedinconnections.py
+
+The script `sendlinkedinconnections.py` is designed to automate the process of sending personalized messages to LinkedIn profiles. You can specify the message template, the search results url, and the # of pages of connections to be contacted. It uses Selenium WebDriver to interact with the LinkedIn website, log in to a user account, and send messages to specified profiles. There is a 30 sec delay on the login page to handle the visual human challenge if needed.
+
+### Key Features
+- **Automated Login**: The script logs into LinkedIn using provided credentials.
+- **Message Personalization**: It includes the recipient's name in the message for a personalized touch.
+- **Error Handling**: Comprehensive logging and error handling are implemented for debugging and tracking the script's progress.
+- **Input File Support**: The script reads profiles and messages from input files for easy management.
+
+### Main Components
+- **Selenium Setup**: Uses Chrome WebDriver with custom options to disable notifications.
+- **Login Function**: Handles the LinkedIn login process.
+- **Message Sending Function**: Sends personalized messages to specified profiles.
+- **Argument Parsing**: Uses argparse to handle command-line arguments for username, password, input file, message file, and optional search URL file.
+
+### Usage
+The script is run from the command line with the following arguments:
+
+--username: LinkedIn username or email (required)
+
+--password: LinkedIn password (required)
+
+--messagefile: Path to the file containing the message template (required)
+
+--pages: Number of search result pages to process (default: 1)
+
+--searchurlfile: Path to the file containing the search results URL (required)
+
+```python
+python3 sendlinkedinconnections.py --username [username] --password [pwd] --messagefile [message file] --pages 1 --searchurlfile [search URL file]
+```
+
+### Flow
+1. **Setup**: The script initializes the Chrome WebDriver with custom options.
+2. **Login**: It logs into LinkedIn using the provided credentials.
+3. **Get Profile Links**: The script retrieves profile links from the search results URL.
+4. **Visit Profiles**: It visits each profile, extracts the first name, and sends a personalized message.
+5. **Error Handling**: The script logs any errors that occur during the process.
+
