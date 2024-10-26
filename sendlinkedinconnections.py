@@ -211,7 +211,7 @@ def click_and_process_more_button(driver, focused_element, message_template, fir
             #
             # follow the person
             #
-            actions.send_keys(Keys.TAB).perform()
+            actions.send_keys(Keys.RETURN).perform()
             logger.info("Followed the person.")
 
         elif menu_option_text == "unfollow":
