@@ -371,4 +371,43 @@ python3 sendlinkedinconnections.py --username [username] --password [pwd]  --pag
 4. **Visit Profiles**: It visits each profile, follows contact.
 5. **Error Handling**: The script logs any errors that occur during the process.
 
+## sendfreelinkedinmessages.py
+
+The script `sendfreelinkedinmessages.py` sends free linkedin messages for the profiles that have open profiles. You can specify mutliple search results urls, and the # of pages of connections to be contacted per search results url. There is a 30 sec delay on the login page to handle the visual human challenge if needed. This script is especially useful if you have hit your 100 connection + following requests per week limit with Linkedin. 
+
+### Key Features
+- **Automated Login**: The script logs into LinkedIn using provided credentials.
+- **Error Handling**: Comprehensive logging and error handling are implemented for debugging and tracking the script's progress.
+- **Input File Support**: The script reads multiple search results url from input files for easy management.
+- **Message file Support**: The script reads the subject line and body from the message file
+
+### Main Components
+- **Selenium Setup**: Uses Chrome WebDriver with custom options to disable notifications.
+- **Login Function**: Handles the LinkedIn login process.
+- **Message Sending Function**: Sends personalized messages to specified profiles.
+- **Argument Parsing**: Uses argparse to handle command-line arguments for username, password, input file, message file, and optional search URL file.
+
+### Usage
+The script is run from the command line with the following arguments:
+
+--username: LinkedIn username or email (required)
+
+--password: LinkedIn password (required)
+
+--searchurlfile: Path to the file containing the search results URL (required)
+
+--pages: Number of search result pages to process (default: 1)
+
+```python
+python3 sendlinkedinconnections.py --username [username] --password [pwd]  --pages 1 --searchurlfile [search URL file] --messagefile [message file]
+```
+
+### Flow
+1. **Setup**: The script initializes the Chrome WebDriver with custom options.
+2. **Login**: It logs into LinkedIn using the provided credentials.
+3. **Get Profile Links**: The script retrieves profile links from the search results URL.
+4. **Visit Profiles**: It visits each profile, sends free message to contact if qualified.
+5. **Error Handling**: The script logs any errors that occur during the process.
+
+
 
