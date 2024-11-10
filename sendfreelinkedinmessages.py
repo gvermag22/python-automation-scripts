@@ -154,18 +154,25 @@ def visit_profile(driver, profile_url, subject, message):
         time.sleep(0.1)
 
         # keep tabbing forward till you find message button
-        while True:
+        max_attempts = 10  # Set the maximum number of attempts
+        attempts = 0  # Initialize the counter
+
+        while attempts < max_attempts:
             actions.send_keys(Keys.TAB).perform()
             time.sleep(0.2)
             focused_element = driver.switch_to.active_element
             button_text = focused_element.text.strip().lower()
+            
             if button_text == "message":
                 logger.info("Message button found")
-                #
-                # open the mesage box
-                #
+                # Open the message box
                 actions.send_keys(Keys.RETURN).perform()
                 break
+            
+            attempts += 1  # Increment the counter
+
+        if attempts == max_attempts:
+            logger.info("Message button not found after maximum attempts")
             # else:
             #     logger.info("Found: " + button_text)
 
@@ -174,8 +181,12 @@ def visit_profile(driver, profile_url, subject, message):
         #
         time.sleep(4)
 
+        #
+        #  move forward 8 times to come to "why?" field per the new interfacce
+        #
+
         actions = ActionChains(driver)
-        for _ in range(2):
+        for _ in range(8):
             actions.send_keys(Keys.TAB).perform()
             time.sleep(0.2)
 
@@ -183,8 +194,12 @@ def visit_profile(driver, profile_url, subject, message):
         focused_element = driver.switch_to.active_element
         button_text = focused_element.text.strip().lower()
 
+        if button_text == "upgrade my plan":
+            logger.info("Out of InMail messages credits")
+            
         #
         # Check if the message is free. This is the only quick and dirty check.
+        # this is applicable for Premium acconts
         #
         if button_text == "why?":
 
@@ -193,7 +208,7 @@ def visit_profile(driver, profile_url, subject, message):
             #
             #  go back to the subject line box
             #
-            for _ in range(2):
+            for _ in range(8):
                 actions.key_down(Keys.SHIFT).send_keys(Keys.TAB).key_up(Keys.SHIFT).perform()
                 time.sleep(0.2)
                 logger.info("Moved to the subject field")
@@ -240,19 +255,26 @@ def visit_profile(driver, profile_url, subject, message):
                 time.sleep(0.02)
                 actions.perform() 
 
-            
             # move to send button
             #
             for _ in range(5):
                 actions.send_keys(Keys.TAB).perform()
                 time.sleep(0.1)
 
-        #
-        # hit send
-        #
-        actions.send_keys(Keys.TAB).perform()
-        logger.info("Message sent!")
+            #
+            # hit send
+            #
+            actions.send_keys(Keys.RETURN).perform()
+            logger.info("Message sent!")
 
+        #
+        #  hit escape to close the message box if it's open
+        #
+        actions.send_keys(Keys.ESCAPE).perform()
+
+        #
+        #  wait for sometime before opening the next profile
+        #
         time.sleep(3)
 
         # Close the tab
