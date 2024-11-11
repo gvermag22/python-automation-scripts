@@ -65,23 +65,6 @@ For Selenium to control browsers, you need a WebDriver. For example, if you are 
 	•	Go to the GeckoDriver page and download the latest version.
 	•	Similarly, extract and place geckodriver.exe in a PATH directory.
 
-Summary of Commands:
-
-Here’s the complete command set for PowerShell (open in Administrator mode):
-
-# Install Chocolatey
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-
-# Install Python
-choco install python --version=3.x.x -y
-
-# Upgrade pip
-python -m ensurepip --upgrade
-
-# Install Selenium
-pip install selenium
-
-Now, you’re all set to begin using Python and Selenium!
 
 ## MacOS setup
 ```
