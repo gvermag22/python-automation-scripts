@@ -7,61 +7,60 @@ To install Chocolatey, Python, pip3, and Selenium on a Windows machine, follow t
 
 Step 1: Install Chocolatey
 
-	1.	Open PowerShell as an administrator.
-	•	Search for “PowerShell” in the Windows Start Menu, right-click on it, and select Run as administrator.
-	2.	In the PowerShell window, run the following command to install Chocolatey:
+Open PowerShell as an administrator.
+Search for “PowerShell” in the Windows Start Menu, right-click on it, and select Run as administrator.
+In the PowerShell window, run the following command to install Chocolatey:
 
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+	Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
+When the installation completes, verify Chocolatey is installed by running:
 
-	3.	When the installation completes, verify Chocolatey is installed by running:
-
-choco --version
+	choco --version
 
 This should display the installed version of Chocolatey.
 
 Step 2: Install Python
 
-	1.	With Chocolatey installed, you can install Python by running the following command in PowerShell:
+With Chocolatey installed, you can install Python by running the following command in PowerShell:
 
-choco install python --version=3.x.x -y
+	choco install python --version=3.x.x -y
 
 (Replace 3.x.x with the specific version you wish to install, like 3.9.7. The -y flag accepts all prompts automatically.)
 
-	2.	After installation, close and reopen PowerShell or Command Prompt to make sure Python is recognized.
-	3.	Verify the installation by checking the Python version:
+After installation, close and reopen PowerShell or Command Prompt to make sure Python is recognized.
+Verify the installation by checking the Python version:
 
-python --version
+	python --version
 
 Step 3: Install pip (if not installed)
 
-	1.	Python installations typically include pip by default. However, to ensure it’s installed, you can upgrade it using:
+Python installations typically include pip by default. However, to ensure it’s installed, you can upgrade it using:
 
-python -m ensurepip --upgrade
+	python -m ensurepip --upgrade
 
+To verify pip is installed, check its version:
 
-	2.	To verify pip is installed, check its version:
-
-pip --version
+	pip --version
 
 Step 4: Install Selenium with pip
 
-	1.	With pip installed, install Selenium by running:
+With pip installed, install Selenium by running:
 
-pip install selenium
+	pip install selenium
 
+Verify Selenium installation by opening a Python interpreter and importing Selenium:
 
-	2.	Verify Selenium installation by opening a Python interpreter and importing Selenium:
-
-python -c "import selenium; print(selenium.__version__)"
+	python -c "import selenium; print(selenium.__version__)"
 
 Step 5: Download WebDriver (ChromeDriver or GeckoDriver)
 
 For Selenium to control browsers, you need a WebDriver. For example, if you are using Chrome, download ChromeDriver; if Firefox, download GeckoDriver.
-	1.	For Chrome:
+
+1.	For Chrome:
 	•	Go to the ChromeDriver page and download the version that matches your Chrome browser version.
 	•	Extract and place the chromedriver.exe file in a directory that is in your system’s PATH (or specify the path explicitly in your Selenium scripts).
-	2.	For Firefox:
+
+2.	For Firefox:
 	•	Go to the GeckoDriver page and download the latest version.
 	•	Similarly, extract and place geckodriver.exe in a PATH directory.
 
