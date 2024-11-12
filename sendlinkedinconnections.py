@@ -132,6 +132,8 @@ def click_and_process_connect_button(driver, focused_element, message_template, 
         logger.info("Clicked Connect button")
         time.sleep(2)
 
+        # input ("in click_and_process_connect_button: After clicking on Connect Button. Hit enter")
+
         actions = ActionChains(driver)
         # Press tab twice to focus on the Add a note button and press enter
         for _ in range(2):
@@ -141,10 +143,12 @@ def click_and_process_connect_button(driver, focused_element, message_template, 
 
         time.sleep(2)
         
-        # Press tab six times to focus on message box
-        for _ in range(6):
-            actions.send_keys(Keys.TAB).perform()
-            time.sleep(0.1)
+        # input ("in click_and_process_connect_button: After clicking on Add Note Button. Hit enter")
+
+        # # Press tab six times to focus on message box
+        # for _ in range(6):
+        #     actions.send_keys(Keys.TAB).perform()
+        #     time.sleep(0.1)
 
         # Send the message
         send_message(driver, message_template, first_name)
@@ -172,7 +176,7 @@ def click_and_process_more_button(driver, focused_element, message_template, fir
 
         # Press enter to open the "more" menu box
         actions.send_keys(Keys.RETURN).perform()
-        time.sleep(0.1)
+        time.sleep(0.2)
 
         #
         # Press tab three times to focus on the Connect or Unfollow option 
@@ -180,7 +184,7 @@ def click_and_process_more_button(driver, focused_element, message_template, fir
         #
         for _ in range(3):
             actions.send_keys(Keys.TAB).perform()
-            time.sleep(0.1)
+            time.sleep(0.2)
 
         focused_element = driver.switch_to.active_element
         menu_option_text = focused_element.text.strip().lower()
@@ -195,12 +199,16 @@ def click_and_process_more_button(driver, focused_element, message_template, fir
             actions.send_keys(Keys.RETURN).perform()
             time.sleep(0.1)
 
+            # input ("click_and_process_more_button: After clicking on Connect Button. Hit enter")
+
             # Press tab twice to focus on the Add a note button and press enter
             for _ in range(2):
                 actions.send_keys(Keys.TAB).perform()
                 time.sleep(0.1)
             actions.send_keys(Keys.RETURN).perform()
             logger.info("Opened message box")
+
+            # input ("click_and_process_more_button: After clicking on Add Note. Hit enter")
             
             time.sleep(2)
 
@@ -225,16 +233,23 @@ def send_message(driver, message_template, first_name):
     """Send a message."""
     try:
         # Type in the message character by character
-        logger.info("Typing in the message")
-        prefixed_message = f"Hi {first_name}, {message_template}"
+ 
+        # input ("Before entering message. Hit enter")
+
+        prefixed_message = f"{first_name}, {message_template}"
+       
+        logger.info(f"Typing in the message \n {first_name}, {message_template}")
+
         for char in prefixed_message:
             actions = ActionChains(driver)
             actions.send_keys(char)
             time.sleep(0.02)
-            actions.perform()  
+            actions.perform()
 
-        # Press tab six times to focus on send button 
-        for _ in range(6):
+        # input ("Entered message. Hit enter")
+
+        # Press tab few times to focus on send button 
+        for _ in range(3):
             actions.send_keys(Keys.TAB).perform()
             time.sleep(0.1)
 
@@ -242,8 +257,11 @@ def send_message(driver, message_template, first_name):
         actions.send_keys(Keys.RETURN).perform()
 
         time.sleep(2)
+
         logger.info("Message sent successfully")
+
     except Exception as e:
+        
         logger.error(f"Error sending message: {str(e)}")
 
 # Update the visit_profile function to use send_message
