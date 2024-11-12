@@ -13,6 +13,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.action_chains import ActionChains
+
 import time
 import subprocess
 import argparse
@@ -28,7 +30,7 @@ def parse_arguments():
     parser.add_argument('-n', '--numbersfile', default='numbers.csv', help='file containing WhatsApp numbers')
     parser.add_argument('-m', '--messagefile', default='message.txt', help='file containing text message')
     parser.add_argument('-a', '--attachments', nargs='*', default=[], help='attachment files to be sent (images, videos, etc.)')
-    parser.add_argument('-w', '--wait', type=int, default=3, help='wait time in minutes for WhatsApp Web to load (default: 3)')
+    parser.add_argument('-w', '--wait', type=int, default=1, help='wait time in minutes for WhatsApp Web to load (default: 1)')
     parser.usage = parser.format_help()
     parser.usage += "\nExample usage:\n"
     parser.usage += " python script.py -n numbers.csv -m message.txt -a image1.jpg video1.mp4 -w 5\n"
@@ -111,35 +113,86 @@ def initialize_driver():
 def send_message(driver, number, message, attachments, vars):
     """Send message and attachments to a WhatsApp number"""
     driver.get(f'https://web.whatsapp.com/send/?phone={number}')
-    wait = WebDriverWait(driver, 20)
-    
-    try:
-        message_box = wait.until(EC.presence_of_element_located((By.XPATH, '//div[@role="textbox" and @data-tab="10" and @aria-placeholder="Type a message"]')))
-        logging.info(f"Message input box found for number {number}")
-    except Exception as e:
-        logging.error(f"Message input box not found for number {number}: {str(e)}")
-        return False
+    logging.info(f"Waiting for the page to load for '{number}'")
 
-    time.sleep(20)  # Additional wait after page load
+    #
+    #  wait for sometime to load page
+    #
+    time.sleep(10)
+    
+    #input("Loaded contact page, PRESS ENTER to proceed")
+
+    # 
+    # Keep tabbing to reach message box
+    #
+    # try:
+    #     # Press Tab to reach message box
+    #     actions = ActionChains(driver)
+    #     for _ in range(28):
+    #         actions.send_keys(Keys.TAB).perform()
+    #         time.sleep(0.3)
+        
+    #     #input("pressed tabs, PRESS ENTER to proceed")
+
+    #     # Get the active element after tabbing
+    #     # message_box = driver.switch_to.active_element
+        
+    #     logging.info(f"Tabbed to message box element for number {number}")
+
+    # except Exception as e:
+    #     logging.error(f"Failed to tab to message box element for number {number}: {str(e)}")
+    #     return False
+
+    #time.sleep(20)  # Additional wait after page load
 
     # Send the message first
     if message:
         try:
             new_message = message.replace("x1", vars['var1']).replace("x2", vars['var2']).replace("x3", vars['var3'])
             logging.info(f"Attempting to send message: {new_message}")
-            message_box.clear()
+
             message_lines_without_EOL = new_message.split('\n')
+
+            # 
+            # select all text based on platform
+            # 
+            actions = ActionChains(driver)
+            if sys.platform == 'darwin':  # Mac
+                actions.key_down(Keys.COMMAND).send_keys('a').key_up(Keys.COMMAND).perform()
+            elif sys.platform.startswith('win'):  # Windows
+                actions.key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).perform()   
+
+            #
+            #  type in the message
+            #
+
             for aline in message_lines_without_EOL:
-                message_box.send_keys(aline)
-                message_box.send_keys(Keys.SHIFT, '\n')
-            logging.info("Message entered in the text box")
-            time.sleep(10)
-            message_box.send_keys(Keys.ENTER)
+                actions = ActionChains(driver)
+                actions.send_keys(aline)
+                actions.key_down(Keys.SHIFT).send_keys(Keys.RETURN).key_up(Keys.SHIFT)
+                time.sleep(0.02)
+                actions.perform() 
+            
+            # for aline in message_lines_without_EOL:
+            #     message_box.send_keys(aline)
+            #     message_box.send_keys(Keys.SHIFT, '\n')
+            # logging.info("Message entered in the text box")
+            # time.sleep(10)
+
+            #input("Typed in message, PRESS ENTER to proceed")
+
+            actions.send_keys(Keys.RETURN).perform()
+
+            # message_box.send_keys(Keys.ENTER)
+
             logging.info("Enter key pressed to send message")
+
             time.sleep(5)
+
         except Exception as e:
             logging.error(f"Failed to send text message to {number}: {str(e)}")
             return False
+
 
     # Then send attachments
     if attachments and attachments[0]:
@@ -186,7 +239,9 @@ def main():
     # Load WhatsApp Web and wait for the specified time
     driver.get('https://web.whatsapp.com/')
     logging.info(f"Waiting {args.wait} minutes for initial WhatsApp Web page to load... If this is too short for your account, increase it using the -w or --wait argument")
+    
     time.sleep(args.wait * 60)  # Convert minutes to seconds
+    
 
     error_filename = f"sendwhatsapp.py.{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.err"
     sent_filename = f"sendwhatsapp.py.{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.sent"
