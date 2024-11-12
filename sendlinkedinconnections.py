@@ -53,7 +53,7 @@ def login_to_linkedin(driver, username, password):
         login_button = driver.find_element(By.XPATH, "//button[@type='submit']")
         login_button.click()
         
-        time.sleep(30)  # Wait for login to complete
+        time.sleep(10)  # Wait for login to complete
         logger.info("Successfully logged in to LinkedIn")
     except Exception as e:
         logger.error(f"Error logging in to LinkedIn: {e}")
@@ -330,11 +330,25 @@ def main():
     try:
         login_to_linkedin(driver, args.username, args.password)
 
+        logger.info("reading message file")
+
         with open(args.messagefile, 'r') as file:
-            message_template = file.read().strip()
+            message_template = '\n'.join(line.strip() for line in file if line.strip() and not line.startswith('#'))
+
+        if not message_template:
+            print("No valid message template found in the file.")
+            exit(1)
+
+        logger.info(f"messagefile read \n {message_template}")
 
         with open(args.searchurlfile, 'r') as file:
-            search_url = file.read().strip()
+            search_url = next((line.strip() for line in file if line.strip() and not line.startswith('#')), None)
+
+        if search_url is None:
+            print("No valid search URL found in the file.")
+            exit(1)
+
+        logger.info(f"searchurlfile read \n {search_url}")
 
         profile_urls = get_profile_links(driver, search_url, args.pages)
         logger.info(f"Found {len(profile_urls)} profile URLs")
