@@ -143,6 +143,67 @@ This script converts outlook csv file into an input file to run sendwhatsapp.py 
    +1112223333,Bob
    ```
 
+
+
+## removecontacts.py
+This script automates removing contacts from a CSV file based on a list of phone numbers to be excluded.
+
+### Features
+- **Automated Removal**: Removes specified phone numbers from the input file.
+- **Formatted Exclusion**: Strips spaces and non-numeric characters before processing.
+- **Logging**: Displays a summary of processed, removed, and retained contacts.
+- **Validation**: Identifies numbers from the exclusion list that were not found in the input file for cross-checking.
+- **Cross-Platform**: Compatible with Windows, macOS, and Linux.
+
+### Prerequisites
+- Python 3.x
+
+### Usage
+Command-line Arguments
+
+- `input_file`: Path to the input CSV file containing phone numbers.
+- `remove_file`: Path to the file containing phone numbers to be removed.
+- `output_file`: Path to save the processed file after removals.
+
+### Example:
+```sh
+python removecontacts.py input.csv remove.csv output.csv
+```
+
+### Input Files
+**input.csv**:
+A comma-delimited file with phone numbers and names.
+Format: `phone_number, name`
+Example:
+```
+1234567890,John Doe
+9876543210,Jane Smith
+```
+
+**remove.csv**:
+A file containing phone numbers to be removed (one per line).
+Format:
+```
+1234567890
+9876543210
+```
+
+### Behavior and Logic
+1. **Read and Format**: Reads the exclusion list and strips non-numeric characters.
+2. **Processing**: Iterates through the input file, removing lines with excluded phone numbers.
+3. **Logging**: Prints a summary of records processed, removed, and retained.
+4. **Cross-Check**: Displays numbers from the exclusion list that were not found in the input file.
+
+### Troubleshooting
+- Ensure that phone numbers in both files are formatted consistently.
+- Run the script with administrative privileges if file permissions cause errors.
+- If numbers are not removed as expected, check the output for unprocessed exclusion numbers.
+
+### Notes
+- The script overwrites the exclusion file with properly formatted phone numbers before processing.
+- Use a text editor or spreadsheet tool to inspect input files before running the script.
+
+
 ## sendwhatsapp.py
 
 This script automates sending personalized WhatsApp messages with attachments to multiple contacts using Selenium WebDriver.
