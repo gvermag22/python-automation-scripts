@@ -263,11 +263,29 @@ Supported formats: JPEG, PNG, MP4, etc.
 
 ### Examples
 
+###### WHATSAPP MESSAGE ######
+
 ```
-python sendwhatsapp.py -h
-python sendwhatsapp.py -n contacts.csv -a image1.jpeg image2.jpeg -w 2
-python sendwhatsapp.py -n leads.csv -a product_video.mp4 -m sales_pitch.txt -w 5
-python sendwhatsapp.py -n leads.csv -a product_video.mp4 -m sales_pitch.txt
+# First export contacts from Google into outlook format
+# and Remove special chars 
+dos2unix KIcontacts26mar2025.csv
+
+# convert OUTLOOK format file to input file format for sending whatsapp messages
+python3 convertcontacts.py KIcontacts26mar2025.csv KIcontacts26mar2025_formatted.csv
+
+# If needed, you can exclude recent contacts who do not need to be contacted 
+python3 removecontacts.py KIcontacts26mar2025_formatted.csv exclude.csv KIcontacts26mar2025_formatted_excluded.csv
+
+# now you can send whatsapp message  (and image or videos) for the event with the scrubbed, formatted contact list
+# see various examples below
+
+python3 sendwhatsapp.py -n jhulan.csv -m jhulan.txt
+
+python3 sendwhatsapp.py -n KIcontacts26mar2025_formatted_excluded.csv -m kirtanappeal.txt
+
+python3 sendwhatsapp.py -n kc2024.csv -m janmastmi.txt -a janmastmi.jpeg
+
+python3 sendwhatsapp.py -n numbers.csv -m kirtan.txt -a k1.MP4 k2.MP4 k3.MP4
 
 ```
 
