@@ -67,10 +67,10 @@ For Selenium to control browsers, you need a WebDriver. For example, if you are 
 
 ## MacOS setup
 ```
-brew install python #install python
-python3 -m ensurepip --upgrade #install pip3
-pip3 install selenium #install selenium
-brew install dos2unix #install dos2unix
+brew install python 
+python3 -m pip install --upgrade pip
+pip3 install selenium 
+brew install dos2unix 
 ```
 - Download VS code IDE application https://code.visualstudio.com/download. It's really easy to manage and run the scripts with it on desktop.
 - MAKE SURE you disable screen/laptop sleep/off or such energy saving features https://support.apple.com/en-me/guide/mac-help/mchlp1168/mac#:~:text=To%20open%20the%20pane%2C%20choose,may%20need%20to%20scroll%20down.)&text=Prevent%20your%20Mac%20from%20going,when%20its%20display%20is%20off.&text=Even%20in%20sleep%20mode%2C%20wake,shared%20printers%20or%20Music%20playlists. because the scripts will run for long time without user input.
