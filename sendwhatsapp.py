@@ -4,7 +4,6 @@ import platform
 import random
 import re
 import sys
-import selenium
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -102,6 +101,16 @@ def read_message(file_msg):
 def initialize_driver():
     """Initialize and configure WebDriver"""
     options = Options()
+
+    # Disable notifications, location, camera, and microphone prompts
+    prefs = {
+        "profile.default_content_setting_values.notifications": 2,   # Block notifications
+        "profile.default_content_setting_values.geolocation": 2,     # Block location requests
+        "profile.default_content_setting_values.media_stream_mic": 2, # Block microphone
+        "profile.default_content_setting_values.media_stream_camera": 2 # Block camera
+    }
+    options.add_experimental_option("prefs", prefs)
+
     if platform.system() in ["Darwin", "Linux"]:
         options.add_argument("user-data-dir=/tmp/whatsapp")
     elif platform.system() == "Windows":
@@ -118,33 +127,11 @@ def send_message(driver, number, message, attachments, vars):
 
     #
     #  wait for sometime to load page
+    #. with larget # of contacts, page load time keeps increasing
     #
-    time.sleep(10)
+    time.sleep(20)
     
-    #input("Loaded contact page, PRESS ENTER to proceed")
-
-    # 
-    # Keep tabbing to reach message box
-    #
-    # try:
-    #     # Press Tab to reach message box
-    #     actions = ActionChains(driver)
-    #     for _ in range(28):
-    #         actions.send_keys(Keys.TAB).perform()
-    #         time.sleep(0.3)
-        
-    #     #input("pressed tabs, PRESS ENTER to proceed")
-
-    #     # Get the active element after tabbing
-    #     # message_box = driver.switch_to.active_element
-        
-    #     logging.info(f"Tabbed to message box element for number {number}")
-
-    # except Exception as e:
-    #     logging.error(f"Failed to tab to message box element for number {number}: {str(e)}")
-    #     return False
-
-    #time.sleep(20)  # Additional wait after page load
+    logging.info("Loaded contact page, Focus should be in the message box field")
 
     # Send the message first
     if message:
@@ -173,22 +160,15 @@ def send_message(driver, number, message, attachments, vars):
                 actions.key_down(Keys.SHIFT).send_keys(Keys.RETURN).key_up(Keys.SHIFT)
                 time.sleep(0.02)
                 actions.perform() 
-            
-            # for aline in message_lines_without_EOL:
-            #     message_box.send_keys(aline)
-            #     message_box.send_keys(Keys.SHIFT, '\n')
-            # logging.info("Message entered in the text box")
-            # time.sleep(10)
 
-            #input("Typed in message, PRESS ENTER to proceed")
+            logging.info("Typed in message")
 
+            time.sleep(1)
             actions.send_keys(Keys.RETURN).perform()
 
-            # message_box.send_keys(Keys.ENTER)
+            logging.info("Enter key pressed to send message.")
 
-            logging.info("Enter key pressed to send message")
-
-            time.sleep(5)
+            time.sleep(random.randrange(3, 5))
 
         except Exception as e:
             logging.error(f"Failed to send text message to {number}: {str(e)}")
@@ -198,20 +178,51 @@ def send_message(driver, number, message, attachments, vars):
     # Then send attachments
     if attachments and attachments[0]:
         logging.info(f"Sending {len(attachments)} attachment(s) to {number}")
+
+        # input("press enter after debugging")
+
         for i, attachment in enumerate(attachments):
             if attachment:
                 try:
-                    attachment_box = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@title="Attach"]')))
+                    
+                    actions = ActionChains(driver)
+                    actions.key_down(Keys.SHIFT).send_keys(Keys.TAB).key_up(Keys.SHIFT)
+                    actions.key_down(Keys.SHIFT).send_keys(Keys.TAB).key_up(Keys.SHIFT)
+                    time.sleep(0.02)
+                    actions.perform() 
+
                     logging.info(f"Attachment button found for number {number}")
-                    attachment_box.click()
+
+                    actions.key_down(Keys.ENTER)
+                    time.sleep(0.02)
+                    actions.perform() 
+
+                    logging.info(f"Attach menu opened for number {number}")
+
+                    # Create the WebDriverWait instance once you have 'driver' ready
+                    wait = WebDriverWait(driver, 10)
                     media_box = wait.until(EC.presence_of_element_located((By.XPATH, '//input[@accept="image/*,video/mp4,video/3gpp,video/quicktime"]')))
                     logging.info(f"Media input box found for number {number}")
                     media_box.send_keys(attachment)
-                    send_button = wait.until(EC.element_to_be_clickable((By.XPATH, '//span[@data-icon="send"]')))
-                    logging.info(f"Send button found for number {number}")
-                    send_button.click()
-                    logging.info(f'Attachment {i+1}/{len(attachments)} ({attachment}) sent successfully to {number}')
+
+                    logging.info(f"Attachment done for number {number}")
+
+                    #
+                    #  reach the send button and press enter
+                    #
+
+                    for _ in range(15):
+                        actions.send_keys(Keys.TAB).perform()
+                        time.sleep(0.2)
+
+                    actions.key_down(Keys.ENTER)
+                    time.sleep(0.02)
+                    actions.perform() 
+                    
+                    logging.info(f"Sent attachment {i+1} for number {number}")
+
                     time.sleep(random.randrange(5, 10))
+
                 except Exception as e:
                     logging.exception(f'Could not send attachment {i+1}/{len(attachments)} ({attachment}) to {number}: {str(e)}')
                     return False
